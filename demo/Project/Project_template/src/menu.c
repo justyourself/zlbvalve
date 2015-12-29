@@ -20,9 +20,9 @@
 
 
 /******************************变量声明***********************************/
-MenuItem TopMenu[2];
+MenuItem TopMenu[1];
 MenuItem Level1_Fun[3];
-MenuItem Basic_Fun[4];
+MenuItem Basic_Fun[12];
 MenuItem Advanced_Fun[5];
 MenuItem Factory_Fun[17];
 uint8_t *const alarm_string[];
@@ -37,24 +37,21 @@ uint8_t FatherIndex[Menu_Level];               //父菜单所在位置
 uint8_t layer;                                 //当前菜单所在层
 
 //Top菜单显示(进入条件,需要在就地状态下,按下SET键)
-MenuItem TopMenu[4] = 
+MenuItem TopMenu[1] = 
 {
-	{4,"基本设置","A00",Display_Basic,Basic_Fun,NULL},
-	{4,"高级设置","A01",Display_Advanced,Advanced_Fun,NULL},
-	{4,"出场设置","A02",Display_Factory,Factory_Fun,NULL},
-	{4,"参数恢复","A03",Set_Default,Default_Fun,NULL},
+	{1,NULL,NULL,Display_TopMenu,Level1_Fun,NULL},
 };
 //Level1菜单显示
 MenuItem Level1_Fun[3] = 
 {
-	{3,"基本设置","A02",Display_Basic,Basic_Fun,TopMenu},
-	{3,"高级设置","A03",Display_Advanced,Advanced_Fun,TopMenu},
-	{3,"出厂设置","A04",Display_Factory,Factory_Fun,TopMenu},
+	{3,"基本设置","A00",Display_Level1,Basic_Fun,TopMenu},
+	{3,"高级设置","A01",Display_Level1,Advanced_Fun,TopMenu},
+	{3,"出厂设置","A02",Display_Level1,Factory_Fun,TopMenu},
 };
 //基本菜单显示
 MenuItem Basic_Fun[12] =
 {
-	{12,"语言选择","B01",Set_Close,NULL,Level1_Fun},
+	{12,"语言选择","B01",Display_Basic,NULL,Level1_Fun},
 	{12,"全开设置","B02",Set_Open,NULL,Level1_Fun},
 	{12,"全关设置","B03",Set_Display,NULL,Level1_Fun},
 	{12,"给定4mA效验","B04",Display_Reserve,NULL,Level1_Fun},
@@ -68,34 +65,39 @@ MenuItem Basic_Fun[12] =
 	{12,"远控手动设置","B12",Display_Reserve,NULL,Level1_Fun},       
 }; 
 //高级菜单显示
-MenuItem Advanced_Fun[5] = 
+MenuItem Advanced_Fun[14] = 
 {
-	{5,"报警COM1","A06",Set_Alarm,NULL,Level1_Fun},
-	{5,"报警COM2","A07",Set_Alarm,NULL,Level1_Fun},
-	{5,"恢复设置","A08",Set_Default,NULL,Level1_Fun},
-	{5,"备用3","A09",Display_Reserve,NULL,Level1_Fun},
-	{5,"备用4","A10",Display_Reserve,NULL,Level1_Fun},
+	{14,"正反作用","C01",Set_Alarm,NULL,Level1_Fun},
+	{14,"最大速度","C02",Set_Alarm,NULL,Level1_Fun},
+	{14,"最小速度","C03",Set_Default,NULL,Level1_Fun},
+	{14,"ESD类型","C04",Display_Reserve,NULL,Level1_Fun},
+	{14,"ESD定位","C05",Display_Reserve,NULL,Level1_Fun},
+	{14,"报警1类型","C06",Display_Reserve,NULL,Level1_Fun},
+	{14,"报警2类型","C07",Display_Reserve,NULL,Level1_Fun},
+	{14,"报警3类型","C08",Display_Reserve,NULL,Level1_Fun},
+	{14,"报警4类型","C09",Display_Reserve,NULL,Level1_Fun},
+	{14,"报警5类型","C10",Display_Reserve,NULL,Level1_Fun},
+	{14,"报警6类型","C11",Display_Reserve,NULL,Level1_Fun},
+	{14,"报警定位","C12",Display_Reserve,NULL,Level1_Fun},
+	{14,"信号类型","C13",Display_Reserve,NULL,Level1_Fun},
+	{14,"设备地址","C14",Display_Reserve,NULL,Level1_Fun},
 };
 //出厂设置
-MenuItem Factory_Fun[17] = 
+MenuItem Factory_Fun[13] = 
 {
-	{17,"输入密码","F11",Password_Verify,NULL,Level1_Fun},
-	{17,"修改密码","F12",Password_Change,NULL,Level1_Fun},
-	{17,"给定4mA效验","F13",Input_Signal,NULL,Level1_Fun},
-	{17,"给定20mA效验","F14",Input_Signal,NULL,Level1_Fun},
-	{17,"反馈4mA效验","F15",Output_Signal,NULL,Level1_Fun},
-	{17,"反馈20mA效验","F16",Output_Signal,NULL,Level1_Fun},
-	{17,"死区调整","F17",Display_DeadZone,NULL,Level1_Fun},
-	{17,"信号故障","F18",Display_Fault,NULL,Level1_Fun},
-	{17,"指定位置","F19",Display_Location,NULL,Level1_Fun},
-	{17,"开阀力矩","F20",Display_Valve,NULL,Level1_Fun},
-	{17,"关阀力矩","F21",Display_Valve,NULL,Level1_Fun},
-	{17,"最大力矩","F22",Display_Valve,NULL,Level1_Fun},
-	{17,"型号","F23",Display_Param,NULL,Level1_Fun},
-	{17,"出厂编号","F24",Display_Param,NULL,Level1_Fun},
-	{17,"产地","F25",Display_Param,NULL,Level1_Fun},
-	{17,"备用5","F26",Display_Reserve,NULL,Level1_Fun},
-	{17,"备用6","F27",Display_Reserve,NULL,Level1_Fun},
+	{13,"密码设置","D01",Password_Verify,NULL,Level1_Fun},
+	{13,"减速范围","D02",Password_Change,NULL,Level1_Fun},
+	{13,"力矩校准","D03",Input_Signal,NULL,Level1_Fun},
+	{13,"力矩单位","D04",Input_Signal,NULL,Level1_Fun},
+	{13,"开阀力矩","D05",Output_Signal,NULL,Level1_Fun},
+	{13,"关阀力矩","D06",Output_Signal,NULL,Level1_Fun},
+	{13,"过力矩系数一","D07",Display_DeadZone,NULL,Level1_Fun},
+	{13,"过力矩系数二","D08",Display_Fault,NULL,Level1_Fun},
+	{13,"输入4mA校准","D09",Display_Location,NULL,Level1_Fun},
+	{13,"输入20mA校准","D10",Display_Valve,NULL,Level1_Fun},
+	{13,"产品编号","D11",Display_Valve,NULL,Level1_Fun},
+	{13,"系数","D12",Display_Valve,NULL,Level1_Fun},
+	{13,"过力矩延时","D13",Display_Param,NULL,Level1_Fun},
 };
 //报警菜单
 uint8_t *const alarm_string[] =
@@ -158,18 +160,32 @@ void Run(MenuItem *menu)
 //编辑: zlb
 //时间: 2015.12.13
 /***************************************************************************/
-void Display_TopMenu(uint8_t *level)
+void Display_TopMenu(void)
 {
-	//uint16_t rate;
+	float rate;
+	uint8_t datastr[6] = {"45.1%"};
 	//显示状态栏
-	Display_Statusbar(status, param_string[level[0]],NORMAL);
+	Display_Statusbar(status, param_string[FatherIndex[0]],NORMAL);
 	//计算进度
-	//rate = Shift_ADC * 10 / distance;
+	switch(FatherIndex[0])
+	{
+		case 0:				//计算开度值
+			//rate =(float) Shift_ADC *10 / distance;
+			rate = 45.1;
+			break;
+		case 1:				//计算温度值
+			//rate = ;
+			break;
+		case 2:				//计算电流值
+			// rate = ;
+			break;
+	}
+	sprintf(datastr, "%.1f%%", rate);
 	//主显示区
-	LCD_Display_String("61%",TYPE_16,4,50,NORMAL);
+	LCD_Display_String(datastr,TYPE_16,4,50,NORMAL);
 	
 	//显示进度条
-	Display_Progressbar(45);
+	Display_Progressbar((uint8_t)rate);
 	
 }
 /***************************************************************************/
@@ -258,8 +274,35 @@ void Clear_Progressbar(void)
 	}
 }
 /***************************************************************************/
-//函数:	void Clear_Progressbar(void)
-//说明:	清除进度条显示
+//函数:	void Display_Level1(void)
+//说明:	level1菜单显示
+//输入: 无
+//输出: 无
+//编辑: zlb
+//时间: 2015.12.13
+/***************************************************************************/
+void Display_Level1(void)
+{
+	uint8_t i;
+	
+    //修改状态栏显示
+    LCD_Display_String(Level1_Fun[FatherIndex[1]].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2,REVERSE);
+    //为屏蔽汉字多出的一个字节
+	LCD_Display_String(" ",TYPE_12,STATUSBARLINE,STATUSBARCOLUMN2+18,NORMAL);
+    //清除进度条
+    Clear_Progressbar();
+    
+    //显示当前菜单
+    LCD_Display_Chinese(Level1_Fun[FatherIndex[1]].DisplayString, TYPE_16, MAINDISPLAYL, MAINDISPLAYL, NORMAL);
+    //显示下级菜单
+    for(i=0;i<2;i++)
+    {
+       LCD_Display_Chinese(Level1_Fun[FatherIndex[1]].Childrenms[i].DisplayString, TYPE_16, CHILDL+2*i, CHILDC+32*i, NORMAL);
+    }	
+}
+/***************************************************************************/
+//函数:	void Display_Basic(void)
+//说明:	基本菜单显示
 //输入: 无
 //输出: 无
 //编辑: zlb
@@ -269,31 +312,23 @@ void Display_Basic(void)
 {
 	uint8_t i;
 	
-        //修改状态栏显示
-        LCD_Display_String(TopMenu[0].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2,REVERSE);
-        //为屏蔽汉字多出的一个字节
-        LCD_Display_6x12(STATUSBARLINE,STATUSBARCOLUMN2+18," ");
-        //清除进度条
-        Clear_Progressbar();
-        
-        //显示当前菜单
-        LCD_Display_Chinese(TopMenu[0].DisplayString, TYPE_16, MAINDISPLAYL, MAINDISPLAYL, NORMAL);
-        //显示下级菜单
-        for(i=0;i<2;i++)
-        {
-           LCD_Display_Chinese(TopMenu[0].Childrenms[i].Childrenms, TYPE_16, CHILDL, CHILDC, NORMAL);
-        }
+    //修改状态栏显示
+    LCD_Display_String(Basic_Fun[FatherIndex[2]].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2,REVERSE);
+    
+    //显示当前菜单为基本菜单(父菜单)
+    LCD_Display_Chinese(Level1_Fun[FatherIndex[1]].DisplayString, TYPE_16, MAINDISPLAYL, MAINDISPLAYL, NORMAL);
+    //显示本级菜单
+    for(i=0;i<2;i++)
+    {
+    	if()
+       LCD_Display_Chinese(Level1_Fun[FatherIndex[1]].Childrenms[i].DisplayString, TYPE_16, CHILDL+2*i, CHILDC+32*i, NORMAL);
+    }
 }
-
 void Language_Fun(void)
 {
 	
 }
-void Display_Level1(void)
-{
-	
-}
-void Display_Basic(void)
+void Default_Fun (void)
 {
 	
 }

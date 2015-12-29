@@ -49,9 +49,8 @@ void Init_Clock(void)
 /***************************************************************************/
 void main(void)
 {
-	uint8_t key = 0;
-	uint16_t adcvalue = 0;
-	uint8_t key1,key2,key3;
+	MenuItem *manyou;				//变量用来漫游真个菜单
+	uint8_t key;
 	// 初始化时钟
 	Init_Clock();
 	// 初始化LCD
@@ -77,48 +76,85 @@ void main(void)
 	//延时
 	Delay(10000);
 	//显示默认界面
-	Display_TopMenu();
+	manyou = TopMenu;
+	Run(manyou);
 	while (1)
 	{
-		//key = Key_Read();
-		/*
-        key1 = key2 = key3 = 0;
-		key1 = GPIO_ReadInputPin(GPIOC,UV_PIN);
-		key2 = GPIO_ReadInputPin(GPIOC,VW_PIN);
-		key3 = GPIO_ReadInputPin(GPIOC,WU_PIN);
-		key = GPIO_ReadInputPin(GPIOE,REMOTE);
-		adcvalue = ADC2_GetConversionValue();
-                if(adcvalue > 0x150 && adcvalue < 0x160)
-                {
-                  GPIO_WriteLow(OUT_PORT,OPEN);
-                  Delay(100000);
-                  adcvalue = ADC2_GetConversionValue();
-                  GPIO_WriteHigh(OUT_PORT,OPEN);
-                  Delay(100000);
-                  adcvalue = ADC2_GetConversionValue();
-                  if(adcvalue > 0x160)
-                  {
-                    GPIO_WriteLow(OUT_PORT,OPEN);
-                  }
-                  else
-                  {
-                    key1++;
-                  }
-                 
-                  
-                }
-                else if(adcvalue > 0x160)
-                {
-                   GPIO_WriteLow(OUT_PORT,OPEN);
-                }
-                else if(adcvalue < 0x10)
-                {
-                  GPIO_WriteLow(OUT_PORT,CLOSE);
-                }
-				*/
+		key = Key_Read();
+		// 无组合键功能
+		switch(key)
+		{
+			case UP:
+				FatherIndex[layer]++;
+				if(FatherIndex[layer] > (manyou->MenuCount -1))
+					FatherIndex[layer] = 0;
+				Run(manyou + FatherIndex[layer]);
+				break;
+			case DOWN:
+				if(FatherIndex[layer] == 0)
+					FatherIndex[layer] = (manyou->MenuCount -1);
+				else
+					FatherIndex[layer]--;
+				Run(manyou + FatherIndex[layer]);
+				break;
+			case SET:
+				if((manyou + FatherIndex[layer])->Childrenms != NULL)
+				{
+					manyou = (manyou+FatherIndex[layer])->Childrenms;
+					layer ++;
+					FatherIndex[layer] = 0;
+				}
+				Run(manyou + FatherIndex[layer]);
+				break;
+			case ESC:
+				if((manyou + FatherIndex[layer])->Parentms != NULL)
+				{
+					manyou = (manyou+FatherIndex[layer])->Parentms;
+					layer --;
+				}
+				Run(manyou + FatherIndex[layer]);
+				break;
+			default:				
+				break;
+		}
 	}
 }
-
+		
+	/*
+	key1 = key2 = key3 = 0;
+	key1 = GPIO_ReadInputPin(GPIOC,UV_PIN);
+	key2 = GPIO_ReadInputPin(GPIOC,VW_PIN);
+	key3 = GPIO_ReadInputPin(GPIOC,WU_PIN);
+	key = GPIO_ReadInputPin(GPIOE,REMOTE);
+	adcvalue = ADC2_GetConversionValue();
+	        if(adcvalue > 0x150 && adcvalue < 0x160)
+	        {
+	          GPIO_WriteLow(OUT_PORT,OPEN);
+	          Delay(100000);
+	          adcvalue = ADC2_GetConversionValue();
+	          GPIO_WriteHigh(OUT_PORT,OPEN);
+	          Delay(100000);
+	          adcvalue = ADC2_GetConversionValue();
+	          if(adcvalue > 0x160)
+	          {
+	            GPIO_WriteLow(OUT_PORT,OPEN);
+	          }
+	          else
+	          {
+	            key1++;
+	          }
+	         
+	          
+	        }
+	        else if(adcvalue > 0x160)
+	        {
+	           GPIO_WriteLow(OUT_PORT,OPEN);
+	        }
+	        else if(adcvalue < 0x10)
+	        {
+	          GPIO_WriteLow(OUT_PORT,CLOSE);
+	        }
+			*/
 #ifdef USE_FULL_ASSERT
 void assert_failed(u8* file, u32 line)
 { 
