@@ -28,7 +28,6 @@
 #define TYPE_8 				0 				//8 µã×Ö·û
 #define TYPE_12 			1 				//12 µãºº×Ö×Ö·û
 #define TYPE_16 			2 				//16 µãºº×Ö×Ö·û
-
 // GPIO Set
 #define GT21_SPI_CLK         CLK_PERIPHERAL_SPI
 #define GT21_SPI_CS_PORT     GPIOG

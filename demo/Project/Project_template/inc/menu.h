@@ -40,9 +40,13 @@ typedef struct _MENUITEM_
 }MenuItem;
 
 //变量声明
-uint8_t FatherIndex[Menu_Level];               //父菜单所在位置
-uint8_t layer;                                 //当前菜单所在层
-
+extern uint8_t FatherIndex[Menu_Level];               //父菜单所在位置
+extern uint8_t layer;                                 //当前菜单所在层
+extern MenuItem TopMenu[1];
+extern MenuItem Level1_Fun[4];
+extern MenuItem Basic_Fun[12];
+extern MenuItem Advanced_Fun[5];
+extern MenuItem Factory_Fun[17];
 
 //函数声明
 void Run(MenuItem *menu);
@@ -53,6 +57,7 @@ void Clear_Progressbar(void);
 void Language_Fun(void);
 void Display_Level1(void);
 void Display_Basic(void);
+void Default_Fun (void);
 void Display_Advanced(void);
 void Display_Factory(void);
 void Set_Close(void);

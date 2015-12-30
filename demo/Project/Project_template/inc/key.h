@@ -25,6 +25,11 @@ typedef enum {local, remote, set} StatusType;
 #define HR2			GPIO_PIN_6		//G6口 ESC
 #define HR3			GPIO_PIN_7		//G7口 SET
 #define HR4			GPIO_PIN_4		//E4口 UP
+// KEY键值定义
+#define UP			0x10			//UP 按键键值
+#define DOWN		0x20			//DOWN 按键键值
+#define ESC			0x40			//ESC 按键键值
+#define SET			0x80			//SET 按键键值
 // LED 定义
 #define ERRLED		GPIO_PIN_7		//D7口 红色故障灯
 #define GREENLED	GPIO_PIN_5		//D5口 绿色就地状态指示灯
