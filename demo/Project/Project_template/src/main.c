@@ -49,7 +49,6 @@ void Init_Clock(void)
 /***************************************************************************/
 void main(void)
 {
-	MenuItem *manyou;				//变量用来漫游真个菜单
 	uint8_t key;
 	// 初始化时钟
 	Init_Clock();
@@ -77,7 +76,7 @@ void main(void)
 	Delay(10000);
 	//显示默认界面
 	manyou = TopMenu;
-	Run(manyou);
+	Display(manyou);
 	while (1)
 	{
 		key = Key_Read();
@@ -88,14 +87,14 @@ void main(void)
 				FatherIndex[layer]++;
 				if(FatherIndex[layer] > (manyou->MenuCount -1))
 					FatherIndex[layer] = 0;
-				Run(manyou + FatherIndex[layer]);
+				Display(manyou + FatherIndex[layer]);
 				break;
 			case DOWN:
 				if(FatherIndex[layer] == 0)
 					FatherIndex[layer] = (manyou->MenuCount -1);
 				else
 					FatherIndex[layer]--;
-				Run(manyou + FatherIndex[layer]);
+				Display(manyou + FatherIndex[layer]);
 				break;
 			case SET:
 				if((manyou + FatherIndex[layer])->Childrenms != NULL)
@@ -103,18 +102,29 @@ void main(void)
 					manyou = (manyou+FatherIndex[layer])->Childrenms;
 					layer ++;
 					FatherIndex[layer] = 0;
+					Display(manyou + FatherIndex[layer]);
 				}
-				Run(manyou + FatherIndex[layer]);
+				else
+					Run(manyou + FatherIndex[layer]);
 				break;
 			case ESC:
 				if((manyou + FatherIndex[layer])->Parentms != NULL)
 				{
 					manyou = (manyou+FatherIndex[layer])->Parentms;
+					FatherIndex[layer] = 0;
 					layer --;
+					Display(manyou + FatherIndex[layer]);
 				}
-				Run(manyou + FatherIndex[layer]);
+				else
+				{
+					manyou = TopMenu;		
+					Display(manyou);
+				}
+					
 				break;
-			default:				
+			default:
+				//刷新页面
+				Display(manyou);
 				break;
 		}
 	}

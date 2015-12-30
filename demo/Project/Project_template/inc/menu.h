@@ -17,31 +17,34 @@
 #include "key.h"
 
 // 宏定义
-#define STATUSBARLINE		1				//状态栏起始行
+#define STATUSBARLINE			1				//状态栏起始行
 #define STATUSBARCOLUMN		2				//状态栏起始列
-#define STATUSBARCOLUMN2	100				//状态栏第二起始列
-#define MAINDISPLAYL            3                               //主显示区起始行
-#define MAINDISPLAYC            1                               //主显示区起始列
-#define CHILDL                  5                               //子菜单显示起始行
-#define CHILDC                  32                              //子菜单显示起始列
+#define STATUSBARCOLUMN2		100				//状态栏第二起始列
+#define MAINDISPLAYL           3               //主显示区起始行
+#define MAINDISPLAYC           1               //主显示区起始列
+#define CHILDL					5               //子菜单显示起始行
+#define CHILDC                 32              //子菜单显示起始列
 
-#define Menu_Level              4                               //最大支持4级菜单
+#define Menu_Level             4               //最大支持4级菜单
 
 // 结构体定义
 //菜单结构体定义
 typedef struct _MENUITEM_
 {
-	uint8_t MenuCount;					//结构体数组的元素个数(菜单个数)
-	uint8_t *DisplayString;					//菜单显示信息
-	uint8_t *Status;					//状态栏显示状态信息
-	void (*Fun)();						//执行函数的指针
-	struct _MENUITEM_ *Childrenms;			        //指向子节点的指针
-	struct _MENUITEM_ *Parentms;			        //指向父节点的指针
+	uint8_t MenuCount;							//结构体数组的元素个数(菜单个数)
+	uint8_t *DisplayString1;					//第一种菜单显示信息
+	uint8_t *DisplayString2;					//第二种菜单显示信息
+	uint8_t *Status;							//状态栏显示状态信息
+	void (*Display)();							//显示函数的指针
+	void (*Fun)();								//执行函数的指针
+	struct _MENUITEM_ *Childrenms;			    //指向子节点的指针
+	struct _MENUITEM_ *Parentms;			    //指向父节点的指针
 }MenuItem;
 
 //变量声明
 extern uint8_t FatherIndex[Menu_Level];               //父菜单所在位置
-extern uint8_t layer;                                 //当前菜单所在层
+extern uint8_t layer; 
+extern MenuItem *manyou;								//变量用来漫游真个菜单//当前菜单所在层
 extern MenuItem TopMenu[1];
 extern MenuItem Level1_Fun[4];
 extern MenuItem Basic_Fun[12];
