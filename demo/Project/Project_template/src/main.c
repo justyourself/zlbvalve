@@ -72,6 +72,8 @@ void main(void)
 
 	//开机显示LOGO
 	LCD_Display_128x64((uint8_t *)log);
+	//设置菜单
+	Init_Menu();
 	//延时
 	Delay(50000);
     //清除界面log

@@ -34,8 +34,7 @@
 typedef struct _MENUITEM_
 {
 	uint8_t MenuCount;							//结构体数组的元素个数(菜单个数)
-	uint8_t *DisplayString1;					//第一种菜单显示信息
-	uint8_t *DisplayString2;					//第二种菜单显示信息
+	uint8_t *DisplayString;					//菜单显示信息
 	uint8_t *Status;							//状态栏显示状态信息
 	void (*Display)();							//显示函数的指针
 	void (*Fun)();						//执行函数的指针
@@ -53,12 +52,8 @@ extern uint8_t FatherIndex[Menu_Level];               //父菜单所在位置
 extern uint8_t layer; 
 extern MenuItem *manyou;								//变量用来漫游真个菜单//当前菜单所在层
 extern MenuItem TopMenu[1];
-extern MenuItem Level1_Fun[3];
-extern MenuItem Basic_Fun[12];
-extern MenuItem Advanced_Fun[14];
-extern MenuItem Factory_Fun[13];
-extern MenuItem Fault_Fun[1];
 //函数声明
+void Init_Menu(void);
 void Display(MenuItem *menu); 
 void Run(MenuItem *menu);
 void Display_TopMenu(void);

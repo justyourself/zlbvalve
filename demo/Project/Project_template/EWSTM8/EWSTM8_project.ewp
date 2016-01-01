@@ -1582,6 +1582,9 @@
   <group>
     <name>Source Files</name>
     <file>
+      <name>$PROJ_DIR$\..\src\flash_eeprom.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\GT21H16S2Y.c</name>
     </file>
     <file>
