@@ -21,9 +21,11 @@
 #define STATUSBARCOLUMN		2				//状态栏起始列
 #define STATUSBARCOLUMN2		100				//状态栏第二起始列
 #define MAINDISPLAYL           3               //主显示区起始行
-#define MAINDISPLAYC           1               //主显示区起始列
+#define MAINDISPLAYC           2               //主显示区起始列
 #define CHILDL					5               //子菜单显示起始行
 #define CHILDC                 32              //子菜单显示起始列
+#define VALUEL					6				//数据显示起始行
+#define VALUEC					50				//数据显示起始列
 
 #define Menu_Level             4               //最大支持4级菜单
 
@@ -36,28 +38,33 @@ typedef struct _MENUITEM_
 	uint8_t *DisplayString2;					//第二种菜单显示信息
 	uint8_t *Status;							//状态栏显示状态信息
 	void (*Display)();							//显示函数的指针
-	void (*Fun)();								//执行函数的指针
+	void (*Fun)();						//执行函数的指针
 	struct _MENUITEM_ *Childrenms;			    //指向子节点的指针
 	struct _MENUITEM_ *Parentms;			    //指向父节点的指针
 }MenuItem;
 
 //变量声明
+extern uint8_t keyset;
+extern uint8_t keyup;								   //数据显示界面按键值传递
+extern uint8_t keydown;
+extern uint8_t refresh;
+extern uint8_t  dofunflag;						       //执行函数执行标志
 extern uint8_t FatherIndex[Menu_Level];               //父菜单所在位置
 extern uint8_t layer; 
 extern MenuItem *manyou;								//变量用来漫游真个菜单//当前菜单所在层
 extern MenuItem TopMenu[1];
-extern MenuItem Level1_Fun[4];
+extern MenuItem Level1_Fun[3];
 extern MenuItem Basic_Fun[12];
-extern MenuItem Advanced_Fun[5];
-extern MenuItem Factory_Fun[17];
-
+extern MenuItem Advanced_Fun[14];
+extern MenuItem Factory_Fun[13];
+extern MenuItem Fault_Fun[1];
 //函数声明
+void Display(MenuItem *menu); 
 void Run(MenuItem *menu);
 void Display_TopMenu(void);
 void Display_Statusbar(StatusType status, uint8_t *number, uint8_t colour);
 void Display_Progressbar(uint8_t rate);
 void Clear_Progressbar(void);
-void Language_Fun(void);
 void Display_Level1(void);
 void Display_Basic(void);
 void Default_Fun (void);
@@ -78,7 +85,10 @@ void Display_Fault(void);
 void Display_Location(void);
 void Display_Valve(void);
 void Display_Param(void);
-
+void Set_Save (void);
+void Set_Value(void);
+void Display_Value(void);
+void Language_Set (void);
 
 
 #endif//__MENU_H

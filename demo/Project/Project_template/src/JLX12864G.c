@@ -233,6 +233,35 @@ void LCD_Clear(void)
 	}
 }
 /***************************************************************************/
+//函数:	void LCD_CleanL2L(uint8_t begin, uint8_t end)
+//说明:	LCD清除指定页与页之间的数据
+//输入: 无
+//输出: 无
+//编辑: zlb
+//时间: 2015.12.13
+/***************************************************************************/
+void LCD_CleanL2L(uint8_t begin, uint8_t end)
+{
+	uint8_t i,j;
+
+	if(begin > end)
+		return;
+	
+	for(i=begin;i<=end;i++)
+	{
+		// 定位显示位置
+		LCD_SetCursorPos(i,1);
+		for(j=0;j<128;j++)
+		{
+			// 清除显示数据
+			LCD_SendByte(DATA_TYPE,0x00);
+			#ifdef DISPLAYBUFF
+			Display_Buff[i-1][j] = 0x00;
+			#endif
+		}
+	}
+}
+/***************************************************************************/
 //函数:	void LCD_SetCursorPos(uint8_t Line, uint8_t Column)
 //说明:	LCD设置显示坐标函数
 //输入: Line 设置行(页)定位,64行定义为8页,Line代表页码; Column 设置列定位,128列 
@@ -637,6 +666,27 @@ void LCD_Display_Mixure(uint8_t *string, uint8_t type, uint8_t Line, uint8_t Col
 	// free buff
 	free(pbff);
 }
-
+/***************************************************************************/
+//函数:	void LCD_Display_Line(uint8_t Line, uint8_t Column)
+//说明:	LCD显示直线,只有起始位置,终点是屏幕结束
+//输入: Line 设置显示行 Column 设置显示列
+//输出: 无
+//编辑: zlb
+//时间: 2015.12.16
+/***************************************************************************/
+void LCD_Display_Line(uint8_t Line, uint8_t Column)
+{
+	uint8_t i;
+	
+	LCD_SetCursorPos(Line,Column);
+	for(i=0;i<128;i++)
+	{
+		//与0x20相或表示要显示直线的位置,列扫描是从低到高(或从右到左),从上到下	
+		//由于是从低位到高位显示,保证上面四个点阵能正常显示,需要将低四位保护,高四位清零
+		Display_Buff[Line-1][i] &= 0x0f;		
+		Display_Buff[Line-1][i] |= 0x20;
+		LCD_SendByte(DATA_TYPE, Display_Buff[1][i]);		
+	}
+}
 
 

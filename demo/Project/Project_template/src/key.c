@@ -13,7 +13,7 @@
 /*************************************************************************/
 #include "stm8s_gpio.h"
 #include "key.h"
-
+#include "menu.h"
 
 /******************************变量定义***********************************/
 uint8_t ADC_Counter = 0;
@@ -72,10 +72,12 @@ void LED_Init(void)
 	if(!GPIO_ReadInputPin(GPIOE,(GPIO_Pin_TypeDef)(REMOTE)))
 	{
 		LED_LightON(BLUELED);			//打开远方指示灯
+		status = remote;
 	}
 	else
 	{
 		LED_LightON(GREENLED);			//打开就地指示灯
+		status = local;
 	}
         
 }
@@ -97,6 +99,7 @@ void InOut_Init(void)
 	GPIO_Init(GPIOE,(GPIO_Pin_TypeDef)(REMOTE),GPIO_MODE_IN_FL_IT);
 	//初始化输入IN IO为浮点输入E口 电机过热输入HEAT_PIN 为中断输入
 	GPIO_Init(GPIOE,(GPIO_Pin_TypeDef)(HEAT_PIN),GPIO_MODE_IN_FL_IT);
+
 	
 	//使能上升沿下降沿触发中断(远方就地为上升沿下降沿触发中断,电机过热中断为下降沿中断 )
 	EXTI_SetExtIntSensitivity(EXTI_PORT_GPIOE, EXTI_SENSITIVITY_RISE_FALL);
@@ -200,7 +203,35 @@ void TIM4_Init(void)
 	//使能TIM4
 	TIM4_Cmd(ENABLE);
 }
-
+/***************************************************************************/
+//函数:	uint8_t Analysis_key(uint8_t key)
+//说明:	特殊菜单中按键处理函数
+//输入: key 传入按键值
+//输出: 根据需要传出修改后的按键值
+//编辑: zlb
+//时间: 2015.12.13
+/***************************************************************************/
+uint8_t Analysis_key(uint8_t key)
+{
+	switch(key)
+	{
+		case ESC:
+			return key;
+		case SET:
+			keyset ++;
+			break;
+		case UP:
+			keyup ++;
+			break;
+		case DOWN:
+			keydown ++;
+			break;
+		default:
+			return key;
+			break;
+	}
+	return 0;
+}
 
 
 

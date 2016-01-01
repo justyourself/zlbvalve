@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "menu.h"
+#include "key.h"
 #include "JLX12864G.h"
 #include "GT21H16S2Y.h"
 
@@ -22,21 +23,28 @@
 /******************************变量声明***********************************/
 MenuItem TopMenu[1];
 MenuItem Level1_Fun[3];
+MenuItem Advanced_Fun[14];
 MenuItem Basic_Fun[12];
-MenuItem Advanced_Fun[5];
-MenuItem Factory_Fun[17];
+MenuItem Factory_Fun[13];
+MenuItem Fault_Fun[1];
+MenuItem Logic_Fun[1];
+MenuItem Language_Fun[2];
 uint8_t *const alarm_string[];
 uint8_t *const default_string[];
 uint8_t *const fault_string[];
 uint8_t *const status_string[];
 uint8_t *const param_string[];
-
 /******************************变量定义***********************************/
 //菜单跳转记录参数定义
 uint8_t FatherIndex[Menu_Level];               //父菜单所在位置
 uint8_t layer = 0;                             //当前菜单所在层
-MenuItem *manyou = NULL;						//变量用来漫游真个菜单
-uint8_t  dofunflag = 0;						//执行函数执行标志
+MenuItem *manyou = NULL;						//变量用来漫游整个菜单
+uint8_t  dofunflag = DISABLE;					//执行函数执行标志
+uint8_t  refresh = ENABLE;						//刷新菜单标志
+uint8_t  keyup = 0;								//数据显示界面按键值传递
+uint8_t  keydown = 0;
+uint8_t  keyset = 0;
+
 //Top菜单显示(进入条件,需要在就地状态下,按下SET键)
 MenuItem TopMenu[1] = 
 {
@@ -52,7 +60,7 @@ MenuItem Level1_Fun[3] =
 //基本菜单显示
 MenuItem Basic_Fun[12] =
 {
-	{12,"语言选择","Language","B01",Display_Basic,Set_Save,NULL,Level1_Fun},
+	{12,"语言选择","Language","B01",Display_Basic,NULL,Language_Fun,Level1_Fun},
 	{12,"全开设置","Open_pos","B02",Display_Basic,Display_Value,NULL,Level1_Fun},
 	{12,"全关设置","Close_pos","B03",Display_Basic,Display_Value,NULL,Level1_Fun},
 	{12,"给定4mA效验","In_4mA_adj","B04",Display_Basic,Display_Value,NULL,Level1_Fun},
@@ -60,7 +68,7 @@ MenuItem Basic_Fun[12] =
 	{12,"死区调整","Death_section","B06",Display_Basic,Set_Value,NULL,Level1_Fun},
 	{12,"信号故障类型","Sign_err","B07",Display_Basic,NULL,Fault_Fun,Level1_Fun},
 	{12,"故障指定位置","Sign_errpos","B08",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{12,"断电动作类型","Poweroff","B09",Display_Basic,Fault_Fun,NULL,Level1_Fun},
+	{12,"断电动作类型","Poweroff","B09",Display_Basic,NULL,Fault_Fun,Level1_Fun},
 	{12,"断电指定位置","Power_pos","B10",Display_Basic,Set_Value,NULL,Level1_Fun},
 	{12,"断电动作延时","Power_delay","B11",Display_Basic,Set_Value,NULL,Level1_Fun},
 	{12,"远控手动设置","Set_local","B12",Display_Basic,Set_Save,NULL,Level1_Fun},       
@@ -101,19 +109,25 @@ MenuItem Factory_Fun[13] =
 	{13,"过力矩延时","Over_delay","D13",Display_Basic,NULL,Level1_Fun},
 };
 //语言设置
-MenuItem Language_Fun[1] = 
+MenuItem Language_Fun[2] = 
 {
-	{1,NULL,NULL,Language_Set,NULL,Basic_Fun},
+	{2,"中文","CHINESE","E01",Display_Basic,Set_Value,NULL,Basic_Fun},
+	{2,"ENGLISH","ENGLISH","E02",Display_Basic,Set_Value,NULL,Basic_Fun},		
 };
 //显示菜单
 MenuItem Display_Fun[1] = 
 {
-	{1,NULL,NULL,Display_Valve,NULL,NULL},
+	{1,NULL,NULL,NULL,Display_Valve,NULL,NULL},
 };
 //错误菜单
 MenuItem Fault_Fun[1] = 
 {
-	{1,NULL,NULL,Display_Fault,NULL,NULL},
+	{1,NULL,NULL,NULL,Display_Fault,NULL,NULL},
+};
+//正反作用菜单
+MenuItem Logic_Fun[1] = 
+{
+	{1,NULL,NULL,NULL,Display_Fault,NULL,NULL},
 };
 //报警菜单
 uint8_t *const alarm_string[] =
@@ -178,7 +192,8 @@ void Display(MenuItem *menu)
 /***************************************************************************/
 void Run(MenuItem *menu) 
 { 
-	(*(menu->Fun))(menu); 
+	dofunflag = ENABLE;
+	(*(menu->Fun))(); 
 }
 /***************************************************************************/
 //函数:	void TopMenu(void)
@@ -192,6 +207,8 @@ void Display_TopMenu(void)
 {
 	float rate;
 	uint8_t datastr[6] = {"45.1%"};
+
+	refresh = ENABLE;
 	//显示状态栏
 	Display_Statusbar(status, param_string[FatherIndex[0]],NORMAL);
 	//计算进度
@@ -226,7 +243,6 @@ void Display_TopMenu(void)
 /***************************************************************************/
 void Display_Statusbar(StatusType status, uint8_t *number, uint8_t colour)
 {
-	uint8_t i;
 	uint8_t *string = NULL;
 	//显示字
 	switch(status)
@@ -249,12 +265,7 @@ void Display_Statusbar(StatusType status, uint8_t *number, uint8_t colour)
 	LCD_Display_Mixure(number, TYPE_12, STATUSBARLINE, STATUSBARCOLUMN2, colour);
 	//显示线
 	//确定显示位置
-	LCD_SetCursorPos(2,1);
-	for(i=0;i<128;i++)
-	{
-		Display_Buff[1][i] |= 0x20;			//与0x20相或表示要显示直线的位置,列扫描是从低到高(或从右到左),从上到下	
-		LCD_SendByte(DATA_TYPE, Display_Buff[1][i]);		
-	}
+	LCD_Display_Line(2,1);
 }
 /***************************************************************************/
 //函数:	void Display_Progressbar(uint8_t rate)
@@ -312,20 +323,28 @@ void Clear_Progressbar(void)
 void Display_Level1(void)
 {
 	uint8_t i;
-	
+
+	refresh = DISABLE;
+	//切换状态
+	LCD_Display_Chinese(status_string[2], TYPE_12, STATUSBARLINE, STATUSBARCOLUMN, NORMAL);
+	//为屏蔽汉字多出的一个字节
+    LCD_Display_String(" ",TYPE_12,STATUSBARLINE,STATUSBARCOLUMN2,NORMAL);
     //修改状态栏显示编号
-    LCD_Display_String(Level1_Fun[FatherIndex[1]].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2,REVERSE);
-    //为屏蔽汉字多出的一个字节
-    LCD_Display_String(" ",TYPE_12,STATUSBARLINE,STATUSBARCOLUMN2+18,NORMAL);
+    LCD_Display_String(Level1_Fun[FatherIndex[1]].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2+6,REVERSE);
+	//显示分割线
+	LCD_Display_Line(2, 1);
+	//清除主显示区
+	LCD_Display_String("     ",TYPE_16,4,50,NORMAL);
     //清除进度条
     Clear_Progressbar();
     
     //显示当前菜单
-    LCD_Display_Chinese(Level1_Fun[FatherIndex[1]].DisplayString1, TYPE_16, MAINDISPLAYL, MAINDISPLAYL, NORMAL);
+    LCD_Display_Chinese(Level1_Fun[FatherIndex[1]].DisplayString1, TYPE_12, MAINDISPLAYL, MAINDISPLAYC, NORMAL);
     //显示下级菜单
     for(i=0;i<2;i++)
     {
-       LCD_Display_Chinese(Level1_Fun[FatherIndex[1]].Childrenms[i].DisplayString1, TYPE_16, CHILDL+2*i, CHILDC, NORMAL);
+	   LCD_Display_String("            ",TYPE_12,CHILDL+2*i, CHILDC,NORMAL);
+	   LCD_Display_Chinese(Level1_Fun[FatherIndex[1]].Childrenms[i].DisplayString1, TYPE_12, CHILDL+2*i, CHILDC, NORMAL);
     }	
 }
 /***************************************************************************/
@@ -338,24 +357,30 @@ void Display_Level1(void)
 /***************************************************************************/
 void Display_Basic(void)
 {
-	uint8_t i;
-	MenuItem *where = Level1_Fun[FatherIndex[1]].Childrenms;
-	
+	MenuItem *parentms = manyou->Parentms;
+	MenuItem *where = manyou;
+
+	refresh = DISABLE;
     //修改状态栏显示 Level1_Fun[FatherIndex[1]].Childrenms[i]
-    LCD_Display_String(where[FatherIndex[layer]].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2, NORMAL);
-    
+    LCD_Display_String(where[FatherIndex[layer]].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2+6, NORMAL);
+    //显示分割线
+	LCD_Display_Line(2, 1);
     //显示当前菜单为基本菜单(父菜单)
-    LCD_Display_Chinese(Level1_Fun[FatherIndex[1]].DisplayString1, TYPE_16, MAINDISPLAYL, MAINDISPLAYL, NORMAL);
+    LCD_Display_Chinese(parentms[FatherIndex[layer-1]].DisplayString1, TYPE_12, MAINDISPLAYL, MAINDISPLAYC, NORMAL);
     //显示本级菜单
     if(FatherIndex[layer] == 0)
 	{
-		LCD_Display_Mixure(where[0].DisplayString1, TYPE_16,CHILDL, CHILDC, REVERSE);
-		LCD_Display_Mixure(where[1].DisplayString1, TYPE_16,CHILDL+2, CHILDC, NORMAL);
+		LCD_Display_String("            ",TYPE_12,CHILDL, CHILDC,NORMAL);
+		LCD_Display_Mixure(where[0].DisplayString1, TYPE_12,CHILDL, CHILDC, REVERSE);
+		LCD_Display_String("            ",TYPE_12,CHILDL+2, CHILDC,NORMAL);
+		LCD_Display_Mixure(where[1].DisplayString1, TYPE_12,CHILDL+2, CHILDC, NORMAL);
 	}
 	else
 	{
-		LCD_Display_Mixure(where[FatherIndex[layer]-1].DisplayString1, TYPE_16,CHILDL, CHILDC, NORMAL);
-		LCD_Display_Mixure(where[FatherIndex[layer]].DisplayString1, TYPE_16,CHILDL+2, CHILDC, REVERSE);	
+		LCD_Display_String("            ",TYPE_12,CHILDL, CHILDC,NORMAL);
+		LCD_Display_Mixure(where[FatherIndex[layer]-1].DisplayString1, TYPE_12,CHILDL, CHILDC, NORMAL);
+		LCD_Display_String("            ",TYPE_12,CHILDL+2, CHILDC,NORMAL);
+		LCD_Display_Mixure(where[FatherIndex[layer]].DisplayString1, TYPE_12,CHILDL+2, CHILDC, REVERSE);
 	}
 }
 /***************************************************************************/
@@ -368,6 +393,9 @@ void Display_Basic(void)
 /***************************************************************************/
 void Language_Set (void)
 {
+	refresh = DISABLE;
+	//修改状态栏
+	
 	//设置语言选项
 
 	//退回上级菜单
@@ -384,8 +412,24 @@ void Language_Set (void)
 /***************************************************************************/
 void Display_Value(void)
 {
+	MenuItem *where = manyou;
+	float rate = 20.1;
+	uint8_t datastr[5] = {0};
+
+	//修改状态栏显示
+	LCD_Display_String(where[FatherIndex[layer]].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2+6, NORMAL);
+    //显示分割线
+	LCD_Display_Line(2, 1);
+	//清除当前主显示区的数据
+	LCD_CleanL2L(3,8);
+	//显示当前所在选项
+	LCD_Display_Mixure(where[FatherIndex[layer]].DisplayString1, TYPE_12,MAINDISPLAYL, MAINDISPLAYC, NORMAL);
 	//找出自己的位置
-	
+
+	//显示数据
+	sprintf(datastr, "%.1f", rate);
+	//主显示区
+	LCD_Display_String(datastr,TYPE_16,VALUEL,VALUEC,REVERSE);
 	
 }
 void Set_Value(void)
@@ -395,10 +439,6 @@ void Set_Value(void)
 	
 }
 void Set_Save (void)
-{
-	
-}
-void Logic_Fun (void)
 {
 	
 }

@@ -71,6 +71,7 @@ uint8_t Key_Read(void);
 void InOut_Init(void);
 void ADC_Shift_Init(void);			//±£¡Ù(Œ¥ π”√)
 void TIM4_Init(void);
+uint8_t Analysis_key(uint8_t key);
 void ADC2_Shift_Init(ADC2_Channel_TypeDef ADC2_Channel, ADC2_SchmittTrigg_TypeDef ADC2_SchmittTrigg_Channel);
 
 

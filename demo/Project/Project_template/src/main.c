@@ -59,7 +59,7 @@ void main(void)
 	LCD_Clear();
 	// 初始化GPIO
 	Key_Init();
-        // 初始化输入输出
+    // 初始化输入输出
 	InOut_Init();
 	// 初始化LED
 	LED_Init();
@@ -71,15 +71,22 @@ void main(void)
 	enableInterrupts();
 
 	//开机显示LOGO
-	LCD_Display_128x64(log);
+	LCD_Display_128x64((uint8_t *)log);
 	//延时
-	Delay(10000);
+	Delay(50000);
+    //清除界面log
+    LCD_Clear();
 	//显示默认界面
 	manyou = TopMenu;
 	Display(manyou);
 	while (1)
 	{
 		key = Key_Read();
+		// 页面是否需要按键值
+		if(dofunflag == ENABLE)
+		{
+			key = Analysis_key(key);
+		}
 		// 无组合键功能
 		switch(key)
 		{
@@ -108,11 +115,18 @@ void main(void)
 					Run(manyou + FatherIndex[layer]);
 				break;
 			case ESC:
-				if((manyou + FatherIndex[layer])->Parentms != NULL)
+				if(((manyou + FatherIndex[layer])->Parentms != NULL)&&(dofunflag == DISABLE))
 				{
 					manyou = (manyou+FatherIndex[layer])->Parentms;
 					FatherIndex[layer] = 0;
 					layer --;
+					if(layer == 0)
+						LCD_Clear();	
+					Display(manyou + FatherIndex[layer]);
+				}
+				else if(dofunflag == ENABLE)
+				{
+					dofunflag	= DISABLE;
 					Display(manyou + FatherIndex[layer]);
 				}
 				else
@@ -123,8 +137,14 @@ void main(void)
 					
 				break;
 			default:
-				//刷新页面
-				Display(manyou);
+				if(refresh == ENABLE)
+				{
+					//刷新页面
+					if(dofunflag == ENABLE)
+						Run(manyou + FatherIndex[layer]);
+					else
+						Display(manyou);
+				}
 				break;
 		}
 	}

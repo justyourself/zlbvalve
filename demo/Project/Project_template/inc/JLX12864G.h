@@ -70,6 +70,7 @@
 void LCD_Init(void);
 void LCD_Clear(void);
 void JLX_LCD_Init(void);
+void LCD_Display_128x64(uint8_t *text);
 void LCD_BacklightCmd(FunctionalState NewState);
 void LCD_SendByte(uint8_t DataType, uint8_t DataToSend);
 void LCD_SetCursorPos(uint8_t Line, uint8_t Column);
@@ -80,7 +81,8 @@ void LCD_Display_16x16(uint8_t Line, uint8_t Column, uint8_t *text);
 void LCD_Display_String(uint8_t *string, uint8_t type, uint8_t Line, uint8_t Column, uint8_t colour);
 void LCD_Display_Chinese(uint8_t *string, uint8_t type, uint8_t Line, uint8_t Column, uint8_t colour);
 void LCD_Display_Mixure(uint8_t *string, uint8_t type, uint8_t Line, uint8_t Column, uint8_t colour);
-
+void LCD_Display_Line(uint8_t Line, uint8_t Column);
+void LCD_CleanL2L(uint8_t begin, uint8_t end);
 // ±äÁ¿ÉùÃ÷
 extern uint8_t Display_Buff[8][128];
 
