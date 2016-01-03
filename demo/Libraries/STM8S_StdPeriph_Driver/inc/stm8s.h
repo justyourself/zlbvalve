@@ -142,7 +142,7 @@
 
 /* Uncomment the line below to enable the FLASH functions execution from RAM */
 #if !defined (RAM_EXECUTION)
-/* #define RAM_EXECUTION  (1) */
+ #define RAM_EXECUTION  (1) //zlb change 2018-1-3
 #endif /* RAM_EXECUTION */
 
 #ifdef RAM_EXECUTION

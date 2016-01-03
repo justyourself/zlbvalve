@@ -17,7 +17,7 @@
 #include "key.h"
 #include "JLX12864G.h"
 #include "GT21H16S2Y.h"
-#include "flash_eeprom.h"
+#include "flash.h"
 
 
 
@@ -73,7 +73,7 @@ uint8_t  refresh = ENABLE;						//刷新菜单标志
 uint8_t  keyup = 0;								//数据显示界面按键值传递
 uint8_t  keydown = 0;
 uint8_t  keyset = 0;
-MenuDataStr MenuData;							//菜单保存数据结构体
+
 //Top菜单显示(进入条件,需要在就地状态下,按下SET键)
 MenuItem TopMenu[1] = 
 {
@@ -503,9 +503,9 @@ void Init_Menu(void)
 	uint8_t i;
 	//读取EEPROM数据
 	//临时定义,显示中文菜单
-	MenuData.language = 1;
+	ParaData.Basic_data.language = 1;
 	//根据配置信息配置菜单对应中英文选项 language = 1,为中文 0,为英文
-	if(MenuData.language)
+	if(ParaData.Basic_data.language)
 	{
 		for(i=0;i<3;i++)
 		{
@@ -613,7 +613,7 @@ void Display_TopMenu(void)
 
 	refresh = ENABLE;
 	//显示状态栏
-	if(MenuData.language)
+	if(ParaData.Basic_data.language)
 		Display_Statusbar(status, param_string[FatherIndex[0]],NORMAL);
 	else
 		Display_Statusbar(status, param_english[FatherIndex[0]],NORMAL);
@@ -654,25 +654,25 @@ void Display_Statusbar(StatusType status, uint8_t *number, uint8_t colour)
 	switch(status)
 	{
 		case local:
-		if(MenuData.language)
+		if(ParaData.Basic_data.language)
 			string = status_string[0];
 		else
 			string = status_english[0];
 		break;
 		case remote:
-		if(MenuData.language)
+		if(ParaData.Basic_data.language)
 			string = status_string[1];
 		else
 			string = status_english[1];
 		break;
 		case set:
-		if(MenuData.language)
+		if(ParaData.Basic_data.language)
 			string = status_string[2];
 		else
 			string = status_english[2];
 		break;
 		default:
-		if(MenuData.language)
+		if(ParaData.Basic_data.language)
 			string = status_string[1];
 		else
 			string = status_english[1];
@@ -744,7 +744,7 @@ void Display_Level1(void)
 
 	refresh = DISABLE;
 	//切换状态
-	if(MenuData.language)
+	if(ParaData.Basic_data.language)
 		LCD_Display_Mixure(status_string[2], TYPE_12, STATUSBARLINE, STATUSBARCOLUMN, NORMAL);
 	else
 		LCD_Display_Mixure(status_english[2], TYPE_12, STATUSBARLINE, STATUSBARCOLUMN, NORMAL);
@@ -787,6 +787,7 @@ void Display_Basic(void)
     //显示分割线
 	LCD_Display_Line(2, 1);
     //显示当前菜单为基本菜单(父菜单)
+    LCD_CleanL2L(3,4);
     LCD_Display_Mixure(parentms[FatherIndex[layer-1]].DisplayString, TYPE_12, MAINDISPLAYL, MAINDISPLAYC, NORMAL);
     //显示本级菜单
     if(FatherIndex[layer] == 0)
@@ -846,11 +847,18 @@ void Display_Value(void)
 	//显示当前所在选项
 	LCD_Display_Mixure(where[FatherIndex[layer]].DisplayString, TYPE_12,MAINDISPLAYL, MAINDISPLAYC, NORMAL);
 	//找出自己的位置
-
+	
 	//显示数据
 	sprintf((char *)datastr, "%.1f", rate);
 	//主显示区
 	LCD_Display_String(datastr,TYPE_16,VALUEL,VALUEC,REVERSE);
+	//数据保存
+	if(keyset)
+	{
+		keyset --;
+		//按下SET按键,将数据保存(先转换后保存)
+		
+	}
 	
 }
 void Set_Value(void)

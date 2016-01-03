@@ -19,8 +19,6 @@
 /* 自定义宏 */
 
 /* 全局变量定义 */
-MenuDataStr defaultdata;				//默认数据
-FactoryDataStr factorydata;			//出厂数据
 
 /*******************************************************************************
  * 名称: WriteMultiBlockByte
@@ -41,16 +39,17 @@ FactoryDataStr factorydata;			//出厂数据
          EEPROM的地址是从0x004000到0x00427f，共1024Byte,每个Block是64Byte,一共10个Block.
 
  ******************************************************************************/
-void WriteMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,FLASH_MemType_TypeDef FLASH_MemType, 
+__ramfunc void WriteMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,FLASH_MemType_TypeDef FLASH_MemType, 
                 FLASH_ProgramMode_TypeDef FLASH_ProgMode, uint8_t *Buffer,uint8_t BlockNum)
 {
   uint8_t  BlockNum_Temp;
+  uint8_t  BlockEnd = BlockStartAddress + BlockNum;
   /* 解锁 flash data eeprom memory */
   FLASH_Unlock(FLASH_MEMTYPE_DATA);
   /* 等待 Data EEPROM area 解锁标志位置位*/
   while (FLASH_GetFlagStatus(FLASH_FLAG_DUL) == RESET)
         ;
-  for(BlockNum_Temp=BlockStartAddress;BlockNum_Temp<BlockNum;BlockNum_Temp++)
+  for(BlockNum_Temp=BlockStartAddress;BlockNum_Temp<BlockEnd;BlockNum_Temp++)
   {
     if(BlockNum_Temp>FLASH_DATA_BLOCKS_NUMBER)
       break;
@@ -82,11 +81,11 @@ void WriteMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,FLASH_MemTy
          BlockNum @ 1~10
 
  ******************************************************************************/
-void ReadMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,uint8_t BlockNum,
+__ramfunc void ReadMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,uint8_t BlockNum,
                         uint8_t ReadBlockByte[])
 {
   uint32_t add, start_add, stop_add;
-  start_add = FLASH_DATA_START_PHYSICAL_ADDRESS+(u32)((BlockNum-1)*FLASH_BLOCK_SIZE);
+  start_add = FLASH_DATA_START_PHYSICAL_ADDRESS+(u32)(BlockStartAddress*FLASH_BLOCK_SIZE);
   stop_add = FLASH_DATA_START_PHYSICAL_ADDRESS + (u32)(BlockNum*FLASH_BLOCK_SIZE);
  
   for (add = start_add; add < stop_add; add++)

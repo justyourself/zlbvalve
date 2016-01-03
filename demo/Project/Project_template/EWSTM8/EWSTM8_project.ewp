@@ -22,7 +22,7 @@
         <option>
           <name>GenCodeModel</name>
           <version>0</version>
-          <state>2</state>
+          <state>0</state>
         </option>
         <option>
           <name>GenDataModel</name>
@@ -61,7 +61,7 @@
         </option>
         <option>
           <name>GenRTConfigPath</name>
-          <state>$TOOLKIT_DIR$\LIB\dlstm8mmn.h</state>
+          <state>$TOOLKIT_DIR$\LIB\dlstm8smn.h</state>
         </option>
         <option>
           <name>GenLibInFormatter</name>
@@ -473,15 +473,15 @@
         <option>
           <name>OOCOutputFormat</name>
           <version>2</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OCOutputOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>EWSTM8_project.srec</state>
+          <state>EWSTM8_project.hex</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -489,7 +489,7 @@
         </option>
         <option>
           <name>OOCObjCopyEnable</name>
-          <state>0</state>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -1581,6 +1581,9 @@
   </group>
   <group>
     <name>Source Files</name>
+    <file>
+      <name>$PROJ_DIR$\..\src\flash.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\src\flash_eeprom.c</name>
     </file>

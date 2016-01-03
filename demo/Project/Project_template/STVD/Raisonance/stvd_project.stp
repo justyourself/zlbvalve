@@ -14,8 +14,8 @@ Toolset=Raisonance
 
 [Config.0]
 ConfigName=Debug
-Target=stvd_project.elf
-OutputFolder=Debug
+Target=$(ProjectSFile).elf
+OutputFolder=..\raisonance
 Debug=$(TargetFName)
 
 [Config.1]
@@ -54,45 +54,46 @@ Settings.1.7=Root.Config.1.Settings.7
 Settings.1.8=Root.Config.1.Settings.8
 
 [Root.Config.0.Settings.0]
-String.6.0=2010,1,14,10,40,19
+String.6.0=2016,1,3,11,45,11
 String.100.0=ST Assembler Linker
 String.100.1=ST7 Cosmic
 String.100.2=STM8 Cosmic
 String.100.3=ST7 Metrowerks V1.1
 String.100.4=Raisonance
 String.101.0=Raisonance
-String.102.0=C:\Program Files\Raisonance\Ride
+String.102.0=
 String.103.0=bin
 String.104.0=INC\STM8;INC\ST7;INC
 String.105.0=LIB\ST7
-String.106.0=Debug
-String.107.0=stvd_project.elf
+String.106.0=..\raisonance
+String.107.0=$(ProjectSFile).elf
 Int.108=0
 
 [Root.Config.0.Settings.1]
 String.6.0=2010,1,14,10,40,19
 String.100.0=$(TargetFName)
 String.101.0=
+String.102.0=
 String.103.0=.\;..\..\src;..\..\inc;
 
 [Root.Config.0.Settings.2]
 String.2.0=
-String.6.0=2010,1,14,10,40,19
-String.100.0=STM8S105C6
+String.6.0=2016,1,3,11,42,32
+String.100.0=STM8S207RB
 
 [Root.Config.0.Settings.3]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
+String.3.0=rcst7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2011,5,27,16,2,52
+String.6.0=2016,1,3,11,42,32
 
 [Root.Config.0.Settings.4]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT DEBUG
+String.3.0=mast7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,1,14,10,40,19
+String.6.0=2016,1,3,11,42,32
 
 [Root.Config.0.Settings.5]
 String.2.0=Running Pre-Link step
@@ -101,13 +102,14 @@ String.8.0=
 
 [Root.Config.0.Settings.6]
 String.2.0=Running Linker
-String.3.0=rlstm8   $(ObjectFiles) TO($(OutputPath)$(TargetSName).aof) $(ToolsetLibOpts) -CustomOutFile[$(ProjectSFile).elf] -CustomRunHexConv DEBUGLINES DEBUGPUBLICS DEBUGSYMBOLS -customMapFile -customMapFile -customMapFilePR($(OutputPath)$(TargetSName).map) 
+String.3.0=rlst7 -P $(ObjectFiles) TO($(OutputPath)$(TargetSName).aof) $(ToolsetLibOpts) -CustomOutFile[$(ProjectSFile).elf] DEBUGLINES DEBUGPUBLICS DEBUGSYMBOLS -CustomRunHexConv -customMapFile -customMapFilePR($(OutputPath)$(TargetSName).map) -customUserSTM8S207 
 String.3.1=omf2elf $(OutputPath)$(TargetSName).aof
 String.4.0=$(OutputPath)$(TargetFName)
-String.5.0=$(OutputPath)$(TargetSName).map
-String.6.0=2010,1,14,10,40,19
-String.100.0=DATASTART(0x0) RAMSIZE(0x800) CODESTART(0x8000) CODESIZE(0x8000) STACKTOP(0x800) STACKSIZE(0x200)
+String.5.0=$(OutputPath)$(ProjectSFile).elf $(OutputPath)$(TargetSName).map
+String.6.0=2016,1,3,11,42,32
+String.100.0= DATASTART(0x0) RAMSIZE(0x1800) CODESTART(0x8000) CODESIZE(0x20000) STACKTOP(0x1800) STACKSIZE(0x400) EEPROMSTART(0x4000) EEPROMSIZE(0x800)
 String.101.0=
+String.102.0=
 Int.0=0
 Int.1=0
 
@@ -128,7 +130,7 @@ String.100.2=STM8 Cosmic
 String.100.3=ST7 Metrowerks V1.1
 String.100.4=Raisonance
 String.101.0=Raisonance
-String.102.0=C:\Program Files\Raisonance\Ride
+String.102.0=
 String.103.0=bin
 String.104.0=INC\STM8;INC\ST7;INC
 String.105.0=LIB\ST7
@@ -144,12 +146,12 @@ String.103.0=.\;..\..\src;..\..\inc;
 
 [Root.Config.1.Settings.2]
 String.2.0=
-String.6.0=2010,1,14,10,40,19
-String.100.0=STM8S105C6
+String.6.0=2016,1,3,11,42,32
+String.100.0=STM8S207RB
 
 [Root.Config.1.Settings.3]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8   $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO  WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc) 
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
 String.6.0=2010,1,14,10,40,19
@@ -172,8 +174,8 @@ String.3.1=ccompst7_7.exe $(OutputPath)$(TargetSName).aof -O($(OutputPath)$(Targ
 String.3.2=omf2elf $(OutputPath)$(TargetSName).aof
 String.4.0=$(OutputPath)$(TargetFName)
 String.5.0=$(OutputPath)$(TargetSName).map
-String.6.0=2010,1,14,10,40,19
-String.100.0=DATASTART(0x0) RAMSIZE(0x800) CODESTART(0x8000) CODESIZE(0x8000) STACKTOP(0x800) STACKSIZE(0x200)
+String.6.0=2016,1,3,11,42,32
+String.100.0=DATASTART(0x0) RAMSIZE(0x1800) CODESTART(0x8000) CODESIZE(0x20000) STACKTOP(0x1800) STACKSIZE(0x400) EEPROMSTART(0x4000) EEPROMSIZE(0x800)
 String.101.0=
 
 [Root.Config.1.Settings.7]
@@ -206,24 +208,24 @@ Settings.1.2=Root.STM8S_StdPeriph_Lib.Config.1.Settings.2
 Settings.1.3=Root.STM8S_StdPeriph_Lib.Config.1.Settings.3
 
 [Root.STM8S_StdPeriph_Lib.Config.0.Settings.0]
-String.6.0=2011,5,27,16,1,23
-String.8.0=Debug
+String.6.0=2016,1,3,11,45,11
+String.8.0=..\raisonance
 Int.0=0
 Int.1=0
 
 [Root.STM8S_StdPeriph_Lib.Config.0.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
+String.3.0=rcst7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2011,5,27,16,2,52
+String.6.0=2016,1,3,11,42,32
 
 [Root.STM8S_StdPeriph_Lib.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT DEBUG
+String.3.0=mast7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,1,14,10,40,19
+String.6.0=2016,1,3,11,42,32
 
 [Root.STM8S_StdPeriph_Lib.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -240,7 +242,7 @@ Int.1=0
 
 [Root.STM8S_StdPeriph_Lib.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8   $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO  WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc) 
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
 String.6.0=2010,1,14,10,40,19
@@ -289,24 +291,24 @@ Settings.1.2=Root.STM8_TouchSensing_Lib.Config.1.Settings.2
 Settings.1.3=Root.STM8_TouchSensing_Lib.Config.1.Settings.3
 
 [Root.STM8_TouchSensing_Lib.Config.0.Settings.0]
-String.6.0=2011,5,27,16,1,46
-String.8.0=Debug
+String.6.0=2016,1,3,11,45,11
+String.8.0=..\raisonance
 Int.0=0
 Int.1=0
 
 [Root.STM8_TouchSensing_Lib.Config.0.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
+String.3.0=rcst7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2011,5,27,16,2,52
+String.6.0=2016,1,3,11,42,32
 
 [Root.STM8_TouchSensing_Lib.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT DEBUG
+String.3.0=mast7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,1,14,10,40,19
+String.6.0=2016,1,3,11,42,32
 
 [Root.STM8_TouchSensing_Lib.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -323,7 +325,7 @@ Int.1=0
 
 [Root.STM8_TouchSensing_Lib.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8   $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO  WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc) 
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
 String.6.0=2010,1,14,10,40,19
@@ -372,24 +374,24 @@ Settings.1.2=Root.Source Files.Config.1.Settings.2
 Settings.1.3=Root.Source Files.Config.1.Settings.3
 
 [Root.Source Files.Config.0.Settings.0]
-String.6.0=2010,1,14,10,40,19
-String.8.0=Debug
+String.6.0=2016,1,3,11,45,11
+String.8.0=..\raisonance
 Int.0=0
 Int.1=0
 
 [Root.Source Files.Config.0.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
+String.3.0=rcst7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2011,5,27,16,2,52
+String.6.0=2016,1,3,11,42,32
 
 [Root.Source Files.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT DEBUG
+String.3.0=mast7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,1,14,10,40,19
+String.6.0=2016,1,3,11,42,32
 
 [Root.Source Files.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -406,7 +408,7 @@ Int.1=0
 
 [Root.Source Files.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8   $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO  WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc) 
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
 String.6.0=2010,1,14,10,40,19
@@ -454,24 +456,24 @@ Settings.1.2=Root.Include Files.Config.1.Settings.2
 Settings.1.3=Root.Include Files.Config.1.Settings.3
 
 [Root.Include Files.Config.0.Settings.0]
-String.6.0=2010,1,14,10,40,19
-String.8.0=Debug
+String.6.0=2016,1,3,11,45,11
+String.8.0=..\raisonance
 Int.0=0
 Int.1=0
 
 [Root.Include Files.Config.0.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
+String.3.0=rcst7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(page0) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(..\..\inc) PIN(..\..\..\..\libraries\stm8_touchsensing_driver\inc) PIN(..\..\..\..\libraries\stm8s_stdperiph_driver\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2011,5,27,16,2,52
+String.6.0=2016,1,3,11,42,32
 
 [Root.Include Files.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
-String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT DEBUG
+String.3.0=mast7 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET DEBUG NOPR ERRORPRINT MODESTM8
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
-String.6.0=2010,1,14,10,40,19
+String.6.0=2016,1,3,11,42,32
 
 [Root.Include Files.Config.0.Settings.3]
 String.2.0=Performing Custom Build on $(InputFile)
@@ -488,7 +490,7 @@ Int.1=0
 
 [Root.Include Files.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=rcstm8   $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO  WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc) 
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) DGC(page0) AUTO WRV(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB -customSizeOpt -CustomOptimOT(7,SIZE) -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc STM8(SMALL) PIN(..\..\inc)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).lst
 String.6.0=2010,1,14,10,40,19
@@ -510,3 +512,31 @@ String.6.0=2010,1,14,10,40,19
 [Root.Include Files...\..\inc\stm8s_it.h]
 ElemType=File
 PathName=..\..\inc\stm8s_it.h
+[Last Settings]
+PROTOCOL=SWIM
+DEVICE=STM8S207RB
+Hardware=ST-LINK
+Port=USB
+CpuFreq=
+Blank check before programming (when available)=0
+Verify after programming=1
+Clear memory before loading a file=1
+Erase device memory before programming (when available)=0
+Display a popup window when an error occurs=1
+Log activity=0
+Log file=
+Unlock protection before a programming cycle=0
+Prompt for new programming cycle=0
+Activate secure mode on next project loading=0
+Enable Serial=0
+Start addr=0
+Length=0
+High Base=0
+Low Base=0
+Step=0
+[OPTION BYTE]
+Count=0
+[DATA MEMORY]
+Count=0
+[PROGRAM MEMORY]
+Count=0
