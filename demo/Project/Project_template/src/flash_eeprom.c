@@ -53,7 +53,7 @@ __ramfunc void WriteMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,F
   {
     if(BlockNum_Temp>FLASH_DATA_BLOCKS_NUMBER)
       break;
-    FLASH_ProgramBlock(BlockNum_Temp, FLASH_MemType, FLASH_ProgMode,Buffer+BlockNum_Temp*FLASH_BLOCK_SIZE);
+    FLASH_ProgramBlock(BlockNum_Temp, FLASH_MemType, FLASH_ProgMode,Buffer);
     FLASH_WaitForLastOperation(FLASH_MemType);
   }
   
@@ -81,19 +81,36 @@ __ramfunc void WriteMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,F
          BlockNum @ 1~10
 
  ******************************************************************************/
-__ramfunc void ReadMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,uint8_t BlockNum,
+void ReadMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,uint8_t BlockNum,
                         uint8_t ReadBlockByte[])
 {
   uint32_t add, start_add, stop_add;
+  add = BlockStartAddress;
   start_add = FLASH_DATA_START_PHYSICAL_ADDRESS+(u32)(BlockStartAddress*FLASH_BLOCK_SIZE);
-  stop_add = FLASH_DATA_START_PHYSICAL_ADDRESS + (u32)(BlockNum*FLASH_BLOCK_SIZE);
+  stop_add = FLASH_DATA_START_PHYSICAL_ADDRESS + (u32)((BlockStartAddress + BlockNum)*FLASH_BLOCK_SIZE);
  
   for (add = start_add; add < stop_add; add++)
       ReadBlockByte[add-FLASH_DATA_START_PHYSICAL_ADDRESS]=FLASH_ReadByte(add);
- 
-  
 }
-
+/***************************************************************************/
+//函数:	void ReadString(BlockStartAddress_TypeDef BlockStartAddress,uint8_t len,
+//                        uint8_t ReadBlockByte[])
+//说明:	读取EEPROM数据函数
+//输入: BlockStartAddress 读取block块,len 读取长度,ReadBlockByte 数据存放缓存
+//输出: 无
+//编辑: zlb
+//时间: 2015.12.22
+/***************************************************************************/
+void ReadString(BlockStartAddress_TypeDef BlockStartAddress,uint8_t len,
+                        uint8_t ReadBlockByte[])
+{
+  uint8_t i;
+  uint32_t start_add;
+  start_add = FLASH_DATA_START_PHYSICAL_ADDRESS+(u32)(BlockStartAddress*FLASH_BLOCK_SIZE);
+ 
+  for (i=0; i < len; i++)
+      ReadBlockByte[i]=FLASH_ReadByte(start_add+i);
+}
 
 
 /*************** (C) COPYRIGHT 风驰iCreate嵌入式开发工作室 *****END OF FILE****/

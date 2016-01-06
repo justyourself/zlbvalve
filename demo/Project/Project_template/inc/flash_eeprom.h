@@ -70,7 +70,9 @@ typedef enum{
 /* º¯ÊýÉùÃ÷ */
 __ramfunc void WriteMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,FLASH_MemType_TypeDef FLASH_MemType, 
                 FLASH_ProgramMode_TypeDef FLASH_ProgMode, uint8_t *Buffer,uint8_t BlockNum);
-__ramfunc void ReadMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,uint8_t BlockNum,
+void ReadMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,uint8_t BlockNum,
+                        uint8_t ReadBlockByte[]);
+void ReadString(BlockStartAddress_TypeDef BlockStartAddress,uint8_t len,
                         uint8_t ReadBlockByte[]);
 
 #endif

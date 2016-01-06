@@ -18,6 +18,9 @@
 
 //自定义结构体
 
+//故障类型
+typedef enum {close, allopen, allclose, keep, assign} ErrType;
+
 //基本菜单数据结构,全部采用16位数据是为后面方便操作数据
 //内存空间比较大,不存在存储不够的问题
 typedef struct _BASIC_DATA_
@@ -73,6 +76,7 @@ typedef struct _FACTORY_DATA_
 //参数结构体
 typedef struct _PARAM_STR_
 {
+	uint8_t flag;						//是否具有数据标志
 	BasicDataStr Basic_data;			//基本菜单数据
 	AdvancedDataStr Advancd_data;		//高级菜单数据
 	FactoryDataStr Factory_data;		//出厂菜单数据
@@ -88,7 +92,8 @@ extern ParamStr ParaData;						//菜单保存数据结构体
 
 //函数声明
 void Param_Init(void);
-
+void Default_Data(void);
+uint16_t CRC_JY(uint8_t *puchMsg, uint16_t usDataLen);
 
 
 #endif//__FLASH_H

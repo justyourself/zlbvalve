@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-398156630
+Checksum=1202423418
 [CallStack]
 ShowArgs=0
 [Disassembly]
@@ -36,8 +36,9 @@ Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\src\main.c}.31.1" 0 0 0 0 "" 0 ""
 Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\src\main.c}.90.3" 1 0 0 0 "" 0 ""
 Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\src\main.c}.78.2" 1 0 0 0 "" 0 ""
 Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\src\main.c}.61.5" 1 0 0 0 "" 0 ""
-Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\src\flash.c}.54.1" 1 0 0 0 "" 0 ""
-Count=5
+Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\src\flash.c}.56.1" 0 0 0 0 "" 0 ""
+Bp5=_ "STD_CODE" "{$PROJ_DIR$\..\src\flash_eeprom.c}.91.2" 0 0 0 0 "" 0 ""
+Count=6
 [Aliases]
 Count=0
 SuppressDialog=0
