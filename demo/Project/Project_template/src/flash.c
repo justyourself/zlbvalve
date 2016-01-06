@@ -123,6 +123,9 @@ void Default_Data(void)
 	//CRC数据计算
 	paratmp->CRC = CRC_JY((uint8_t *)paratmp, sizeof(ParamStr)-2);
 	//保存至数据存储区
+
+	//释放内存空间
+	free(paratmp);
 	
 }
 /***************************************************************************/
