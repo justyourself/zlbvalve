@@ -12,6 +12,7 @@
  */
 /*************************************************************************/
 #include "stm8s_gpio.h"
+#include "JLX12864G.h"
 #include "key.h"
 #include "menu.h"
 
@@ -21,6 +22,7 @@ uint8_t ADC_Channel = ADC2_CHANNEL_4;		//默认ADC为第四通道,位移采集
 uint16_t Shift_ADC = 0;					//位移ADC值
 uint16_t Current_ADC = 0;					//电流ADC值
 uint8_t status;								//当前状态(远方或就地)
+uint32_t light_flag = 1;					//背光灯标志,为0时不进行计数
 
 
 /******************************函数定义***********************************/
@@ -131,6 +133,10 @@ uint8_t Key_Read(void)
 		keydata |= GPIO_ReadInputPin(GPIOE, (GPIO_Pin_TypeDef)HR4);
 		if(keydata ^ 0xf0)
 		{
+			//按键按下刷新背光标志
+			if(light_flag == 0)
+				LCD_BacklightCmd(ENABLE);
+			light_flag = 1;
 			return keydata;
 		}	
 	}

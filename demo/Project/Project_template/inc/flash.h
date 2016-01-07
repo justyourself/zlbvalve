@@ -69,7 +69,7 @@ typedef struct _FACTORY_DATA_
   uint16_t  overmoment2;				//过力矩系数2
   uint16_t  in4ma;						//输入4ma校准
   uint16_t  in20ma;						//输入20ma校准
-  uint16_t  *number;					//产品编号地址
+  uint8_t  *number;						//产品编号地址
   uint16_t  factor;						//系数
   uint16_t  overdelay;					//过力矩延时
 }FactoryDataStr;

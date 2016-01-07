@@ -74,7 +74,8 @@ void ReadMultiBlockByte(BlockStartAddress_TypeDef BlockStartAddress,uint8_t Bloc
                         uint8_t ReadBlockByte[]);
 void ReadString(BlockStartAddress_TypeDef BlockStartAddress,uint8_t len,
                         uint8_t ReadBlockByte[]);
-
+void WriteString(BlockStartAddress_TypeDef BlockStartAddress,uint8_t len,
+                        uint8_t ReadBlockByte[]);
 #endif
 
 /******************* (C) COPYRIGHT 风驰iCreate嵌入式开发工作室 *****END OF FILE****/

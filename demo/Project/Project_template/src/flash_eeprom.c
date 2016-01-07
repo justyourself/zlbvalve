@@ -111,6 +111,27 @@ void ReadString(BlockStartAddress_TypeDef BlockStartAddress,uint8_t len,
   for (i=0; i < len; i++)
       ReadBlockByte[i]=FLASH_ReadByte(start_add+i);
 }
-
+/***************************************************************************/
+//函数:	void WriteString(BlockStartAddress_TypeDef BlockStartAddress,uint8_t len,
+//                        uint8_t ReadBlockByte[])
+//说明:	写EEPROM数据函数
+//输入: BlockStartAddress 写block块,len 写长度,ReadBlockByte 数据存放缓存
+//输出: 无
+//编辑: zlb
+//时间: 2015.12.22
+/***************************************************************************/
+void WriteString(BlockStartAddress_TypeDef BlockStartAddress,uint8_t len,
+                        uint8_t ReadBlockByte[])
+{
+  uint8_t i;
+  uint32_t start_add;
+  start_add = FLASH_DATA_START_PHYSICAL_ADDRESS+(u32)(BlockStartAddress*FLASH_BLOCK_SIZE);
+  //解锁flash data eeprom memory
+  FLASH_Unlock(FLASH_MEMTYPE_DATA);
+  for (i=0; i < len; i++)
+		FLASH_ProgramByte(start_add + i,ReadBlockByte[i]);
+  //操作完要加锁
+  FLASH_Lock(FLASH_MEMTYPE_DATA);
+}
 
 /*************** (C) COPYRIGHT 风驰iCreate嵌入式开发工作室 *****END OF FILE****/

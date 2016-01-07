@@ -22,6 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm8s_it.h"
 #include "stm8s_adc2.h"
+#include "JLX12864G.h"
 #include "key.h"
 
 /** @addtogroup I2C_EEPROM
@@ -185,7 +186,7 @@ INTERRUPT_HANDLER(EXTI_PORTE_IRQHandler, 7)
 		else
 		{
 			//高电平为就地状态
-			status = local;						//就地状态
+			status = local;					//就地状态
 			LED_LightON(GREENLED);			//打开就地指示灯
 			LED_LightOFF(BLUELED);			//关闭远方指示灯			
 		}
@@ -523,6 +524,14 @@ INTERRUPT_HANDLER(TIM6_UPD_OVF_TRG_IRQHandler, 23)
   */
   //开始ADC转换
   ADC2_StartConversion();
+  if(light_flag)
+  		light_flag++;
+  //判断是否超过待机时间
+  if(light_flag > LOWPOWER)
+  	{
+  		light_flag = 0;
+		LCD_BacklightCmd(DISABLE);
+  	}
   //清除中断标志
   TIM4_ClearITPendingBit(TIM4_IT_UPDATE);
 }

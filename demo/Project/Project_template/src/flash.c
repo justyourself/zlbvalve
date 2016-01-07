@@ -67,12 +67,16 @@ void Param_Init(void)
 		{
 			//校验失败,从默认数据存储区读取数据
 			ReadString(DEFAULTBLOCK, sizeof(ParamStr), (uint8_t *)&ParaData);
+			//保存到菜单数据块中
+			WriteString(PARAMBLOCK, sizeof(ParamStr), (uint8_t *)&ParaData);
 		}
 	}
 	else
 	{
 		//flag读取失败,从默认数据存储区读取数据
 		ReadString(DEFAULTBLOCK, sizeof(ParamStr), (uint8_t *)&ParaData);
+		//保存到菜单数据块中
+		WriteString(PARAMBLOCK, sizeof(ParamStr), (uint8_t *)&ParaData);
 	}
 }
 /***************************************************************************/
@@ -119,11 +123,23 @@ void Default_Data(void)
 	paratmp->Advancd_data.signaltype = 0;		//0,4~20mA信号,1,0~20mA信号,2,0~10V信号
 	paratmp->Advancd_data.addr = 3200;			//设备地址,U16
 	//出厂设置菜单
-
+	paratmp->Factory_data.password = 110;		//密码设置				
+	paratmp->Factory_data.slowrange = 3;		//减速范围
+	paratmp->Factory_data.moment = 1;			//力矩校准
+	paratmp->Factory_data.momentunits = 0;		//力矩单位 0,Nm;1,N
+  	paratmp->Factory_data.openmoment = 5;		//开力矩
+  	paratmp->Factory_data.closemoment = 3;		//关力矩
+  	paratmp->Factory_data.overmoment1 = 1;		//过力矩系数1
+  	paratmp->Factory_data.overmoment2 = 2;		//过力矩系数2
+  	paratmp->Factory_data.in4ma = 2;			//输入4ma校准
+  	paratmp->Factory_data.in20ma = 5;			//输入20ma校准
+  	paratmp->Factory_data.number = "河南郑州";	//产品编号地址
+  	paratmp->Factory_data.factor = 2;			//系数
+  	paratmp->Factory_data.overdelay = 30;		//过力矩延时
 	//CRC数据计算
 	paratmp->CRC = CRC_JY((uint8_t *)paratmp, sizeof(ParamStr)-2);
 	//保存至数据存储区
-
+	WriteString(DEFAULTBLOCK, sizeof(ParamStr), (uint8_t *)paratmp);
 	//释放内存空间
 	free(paratmp);
 	

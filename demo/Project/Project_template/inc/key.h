@@ -20,6 +20,8 @@
 //状态定义
 typedef enum {local, remote, set} StatusType;
 // 宏定义
+// 参数
+#define LOWPOWER	420000u			//7*60*1000 7min背光时间
 // KEY 定义
 #define HR1			GPIO_PIN_5		//G5口 DOWN
 #define HR2			GPIO_PIN_6		//G6口 ESC
@@ -60,9 +62,10 @@ typedef enum {local, remote, set} StatusType;
 //变量声明
 extern uint8_t ADC_Counter ;		//ADC通道采集计数器
 extern uint8_t ADC_Channel ;		//默认ADC为第四通道,位移采集
-extern uint16_t Shift_ADC ;			//位移ADC值
+extern uint16_t Shift_ADC ;		//位移ADC值
 extern uint16_t Current_ADC ;		//电流ADC值
 extern uint8_t status;				//当前状态(远方或就地)
+extern uint32_t light_flag;		//背光灯标志
 //函数声明
 void Delay(uint32_t ms);
 void Key_Init(void);

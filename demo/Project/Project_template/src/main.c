@@ -57,8 +57,6 @@ void main(void)
 	// 初始化字库芯片
 	GT21H16S2Y_GPIO_Init();
 	LCD_Clear();
-	// 初始化菜单参数
-    Param_Init();
 	// 初始化GPIO
 	Key_Init();
     // 初始化输入输出
@@ -74,6 +72,8 @@ void main(void)
 
 	//开机显示LOGO
 	LCD_Display_128x64((uint8_t *)log);
+	// 初始化菜单参数
+    Param_Init();
 	//设置菜单
 	Init_Menu();
 	//延时
