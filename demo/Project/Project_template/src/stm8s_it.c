@@ -23,6 +23,7 @@
 #include "stm8s_it.h"
 #include "stm8s_adc2.h"
 #include "JLX12864G.h"
+#include "flash.h"
 #include "key.h"
 
 /** @addtogroup I2C_EEPROM
@@ -463,7 +464,17 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 	{
 		Current_ADC = ADC2_GetConversionValue();
 	}
-	
+	//计算是否过流
+	//计算是否超过开度值
+	if(Shift_ADC < (ParaData.Basic_data.allopen + Shift_Step))
+	{
+		Motor_Out(OPEN, DISABLE);
+	}
+	else if(Shift_ADC > (ParaData.Basic_data.allclose - Shift_Step))
+	{
+		Motor_Out(CLOSE, DISABLE);
+	}
+	//切换ADC测量通道7通道为电流测量,4通道为位移测量
 	if(ADC_Counter >= 10)				//切换Channel_7(10次测量1次)
 	{
 		// Clear the ADC2 channels 

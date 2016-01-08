@@ -64,6 +64,7 @@ extern uint8_t ADC_Counter ;		//ADC通道采集计数器
 extern uint8_t ADC_Channel ;		//默认ADC为第四通道,位移采集
 extern uint16_t Shift_ADC ;		//位移ADC值
 extern uint16_t Current_ADC ;		//电流ADC值
+extern uint16_t Shift_Step ;		//位移ADC偏移多少开始停止电机转动
 extern uint8_t status;				//当前状态(远方或就地)
 extern uint32_t light_flag;		//背光灯标志
 //函数声明
@@ -75,6 +76,7 @@ void InOut_Init(void);
 void ADC_Shift_Init(void);			//保留(未使用)
 void TIM4_Init(void);
 uint8_t Analysis_key(uint8_t key);
+void Motor_Out(uint8_t action, FunctionalState statu);
 void ADC2_Shift_Init(ADC2_Channel_TypeDef ADC2_Channel, ADC2_SchmittTrigg_TypeDef ADC2_SchmittTrigg_Channel);
 
 

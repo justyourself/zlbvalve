@@ -21,6 +21,7 @@ uint8_t ADC_Counter = 0;
 uint8_t ADC_Channel = ADC2_CHANNEL_4;		//默认ADC为第四通道,位移采集
 uint16_t Shift_ADC = 0;					//位移ADC值
 uint16_t Current_ADC = 0;					//电流ADC值
+uint16_t Shift_Step = 20;					//位移ADC偏移多少开始停止电机转动
 uint8_t status;								//当前状态(远方或就地)
 uint32_t light_flag = 1;					//背光灯标志,为0时不进行计数
 
@@ -238,7 +239,25 @@ uint8_t Analysis_key(uint8_t key)
 	}
 	return 0;
 }
-
+/***************************************************************************/
+//函数:	void Motor_Out(uint8_t action, FunctionalState statu)
+//说明:	电机控制输出函数,使能电机运转与失能电机运转
+//输入: action 开或者关运动, statu 状态为使能或失能
+//输出: 无
+//编辑: zlb
+//时间: 2015.12.13
+/***************************************************************************/
+void Motor_Out(uint8_t action, FunctionalState statu)
+{
+	if(statu == ENABLE)
+	{
+		GPIO_WriteHigh(OUT_PORT, action);
+	}
+	else
+	{
+		GPIO_WriteLow(OUT_PORT, action);
+	}
+}
 
 
 
