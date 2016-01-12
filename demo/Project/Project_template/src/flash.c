@@ -96,8 +96,8 @@ void Default_Data(void)
 	paratmp->flag = 1;							//有数据
 	//基本菜单默认设置
 	paratmp->Basic_data.language = 1;			//中文显示
-	paratmp->Basic_data.allopen = 10;			//全开值,需要根据实际进行调整设置
-	paratmp->Basic_data.allclose = 50;			//全关值,需要根据实际进行调整设置
+	paratmp->Basic_data.allopen = 920;			//全开值,需要根据实际进行调整设置
+	paratmp->Basic_data.allclose = 100;			//全关值,需要根据实际进行调整设置
 	paratmp->Basic_data.out4ma = 5;				//输出4mA校准
 	paratmp->Basic_data.out20ma = 5;			//输出20mA校准	
 	paratmp->Basic_data.deadzone = 3;			//死区调整值

@@ -621,8 +621,9 @@ void Display_TopMenu(void)
 	switch(FatherIndex[0])
 	{
 		case 0:				//计算开度值
-			//rate =(float) Shift_ADC *10 / distance;
-			rate = 45.1;
+			rate = ParaData.Basic_data.allopen - ParaData.Basic_data.allclose;
+			rate =(float) (Shift_ADC - ParaData.Basic_data.allclose )*100 / rate;
+			//rate = 45.1;
 			break;
 		case 1:				//计算温度值
 			//rate = ;
@@ -861,6 +862,40 @@ void Display_Value(void)
 	}
 	
 }
+/***************************************************************************/
+//函数:	void Display_Valve(void)
+//说明:	显示菜单数据,对没有菜单的数据进行显示
+//输入: 无
+//输出: 无
+//编辑: zlb
+//时间: 2015.12.30
+/***************************************************************************/
+/*
+uint16_t GetMenu_Data(uint8_t father, uint8_t item)
+{
+	uint16_t tempdata;
+	uint8_t *menudata = NULL;
+
+	switch(father)
+	{
+		case 0:			//基本菜单
+			//获取菜单数据地址
+			menudata = (uint8_t *)&ParaData.Basic_data.language;
+			tempdata = menudata[item*2];
+			break;
+		case 1:			//高级菜单
+			//获取菜单数据地址
+			menudata = ParaData.Advancd_data.startoption;
+		break;
+		case 2:			//出厂菜单
+		break;
+		default:
+		break;
+			
+	}
+
+}
+*/
 void Set_Value(void)
 {
 	//找出自己的位置

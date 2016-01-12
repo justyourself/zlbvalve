@@ -20,6 +20,7 @@
 uint8_t ADC_Counter = 0;
 uint8_t ADC_Channel = ADC2_CHANNEL_4;		//默认ADC为第四通道,位移采集
 uint16_t Shift_ADC = 0;					//位移ADC值
+FlagTypeStr flag = 0;					    //状态标志
 uint16_t Current_ADC = 0;					//电流ADC值
 uint16_t Shift_Step = 20;					//位移ADC偏移多少开始停止电机转动
 uint8_t status;								//当前状态(远方或就地)
@@ -71,7 +72,13 @@ void LED_Init(void)
 {
 	//初始化LED IO为上拉
 	GPIO_Init(LED_PORT,(GPIO_Pin_TypeDef)(ERRLED|GREENLED|BLUELED),GPIO_MODE_OUT_PP_HIGH_FAST);
-        
+
+	 //判断电机过热输入
+	if(GPIO_ReadInputPin(HEAT_PORT, HEAT_PIN))
+	{
+		//点亮故障灯
+		LED_LightON(ERRLED);
+	}
 	if(!GPIO_ReadInputPin(GPIOE,(GPIO_Pin_TypeDef)(REMOTE)))
 	{
 		LED_LightON(BLUELED);			//打开远方指示灯
@@ -103,6 +110,12 @@ void InOut_Init(void)
 	//初始化输入IN IO为浮点输入E口 电机过热输入HEAT_PIN 为中断输入
 	GPIO_Init(GPIOE,(GPIO_Pin_TypeDef)(HEAT_PIN),GPIO_MODE_IN_FL_IT);
 
+	//初始化输出为高电平
+	GPIO_WriteHigh(OUT_PORT,(GPIO_Pin_TypeDef)(ERR1|ERR2|OPEN|CLOSE));
+	//分合控制输出状态,0分合输出使能,1分合输出失能
+	flag.overclose = 0;
+	flag.overopen = 0;
+	Shift_Status = 0x00;
 	
 	//使能上升沿下降沿触发中断(远方就地为上升沿下降沿触发中断,电机过热中断为下降沿中断 )
 	EXTI_SetExtIntSensitivity(EXTI_PORT_GPIOE, EXTI_SENSITIVITY_RISE_FALL);
@@ -136,12 +149,15 @@ uint8_t Key_Read(void)
 		{
 			//按键按下刷新背光标志
 			if(light_flag == 0)
+			{
 				LCD_BacklightCmd(ENABLE);
-			light_flag = 1;
+				light_flag = 1;
+				keydata = 0;
+			}	
 			return keydata;
 		}	
 	}
-	else if(keydata ^ 0xf0)
+	else if((keydata ^ 0xf0) == 0)
 	{
 		keyup = 1;
 		return 0;

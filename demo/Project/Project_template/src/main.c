@@ -15,6 +15,7 @@
 #include "stm8s.h"
 #include "stm8s_clk.h"
 #include "key.h"
+#include "flash.h"
 #include "menu.h"
 #include "GT21H16S2Y.h"
 #include "JLX12864G.h"
@@ -57,6 +58,8 @@ void main(void)
 	// 初始化字库芯片
 	GT21H16S2Y_GPIO_Init();
 	LCD_Clear();
+	// 初始化菜单参数
+    Param_Init();
 	// 初始化GPIO
 	Key_Init();
     // 初始化输入输出
@@ -72,8 +75,6 @@ void main(void)
 
 	//开机显示LOGO
 	LCD_Display_128x64((uint8_t *)log);
-	// 初始化菜单参数
-    Param_Init();
 	//设置菜单
 	Init_Menu();
 	//延时
@@ -151,44 +152,18 @@ void main(void)
 				}
 				break;
 		}
+		//判断分合输出是否失能,如果失能但是分合位置在行程范围之内,将去除失能
+		if(Shift_Status)
+		{
+			if((Shift_ADC > ParaData.Basic_data.allclose) && (Shift_ADC < ParaData.Basic_data.allopen))
+			{
+				Motor_Out(OPEN, ENABLE);
+				Motor_Out(CLOSE, ENABLE);
+				Shift_Status = 0;
+			}
+		}
 	}
 }
-		
-	/*
-	key1 = key2 = key3 = 0;
-	key1 = GPIO_ReadInputPin(GPIOC,UV_PIN);
-	key2 = GPIO_ReadInputPin(GPIOC,VW_PIN);
-	key3 = GPIO_ReadInputPin(GPIOC,WU_PIN);
-	key = GPIO_ReadInputPin(GPIOE,REMOTE);
-	adcvalue = ADC2_GetConversionValue();
-	        if(adcvalue > 0x150 && adcvalue < 0x160)
-	        {
-	          GPIO_WriteLow(OUT_PORT,OPEN);
-	          Delay(100000);
-	          adcvalue = ADC2_GetConversionValue();
-	          GPIO_WriteHigh(OUT_PORT,OPEN);
-	          Delay(100000);
-	          adcvalue = ADC2_GetConversionValue();
-	          if(adcvalue > 0x160)
-	          {
-	            GPIO_WriteLow(OUT_PORT,OPEN);
-	          }
-	          else
-	          {
-	            key1++;
-	          }
-	         
-	          
-	        }
-	        else if(adcvalue > 0x160)
-	        {
-	           GPIO_WriteLow(OUT_PORT,OPEN);
-	        }
-	        else if(adcvalue < 0x10)
-	        {
-	          GPIO_WriteLow(OUT_PORT,CLOSE);
-	        }
-			*/
 #ifdef USE_FULL_ASSERT
 void assert_failed(u8* file, u32 line)
 { 

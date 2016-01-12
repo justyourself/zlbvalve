@@ -156,6 +156,7 @@ INTERRUPT_HANDLER(EXTI_PORTE_IRQHandler, 7)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+  uint8_t temp = 0;
   EXTI_Sensitivity_TypeDef HeatExti_Sensitivity_Type;
   
   //获取外部中断管脚
@@ -171,10 +172,11 @@ INTERRUPT_HANDLER(EXTI_PORTE_IRQHandler, 7)
     case EXTI_SENSITIVITY_RISE_FALL: 
 	//上升下降沿触发中断
 		//中断执行函数 判断电机是否过热 过热输入为低电平
-		if(!GPIO_ReadInputPin(HEAT_PORT, HEAT_PIN))
+		if(GPIO_ReadInputPin(HEAT_PORT, HEAT_PIN))
 		{
 			//强制停止电机输出
-			
+			//点亮故障灯
+			LED_LightON(ERRLED);
 		}
 		//远方就地中断
 		if(!GPIO_ReadInputPin(HEAT_PORT, REMOTE))
@@ -465,14 +467,17 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 		Current_ADC = ADC2_GetConversionValue();
 	}
 	//计算是否过流
-	//计算是否超过开度值
-	if(Shift_ADC < (ParaData.Basic_data.allopen + Shift_Step))
-	{
-		Motor_Out(OPEN, DISABLE);
-	}
-	else if(Shift_ADC > (ParaData.Basic_data.allclose - Shift_Step))
+	//计算是否超过开度值(不确定开关AD值的大小关系,需要添加比较程序)
+	if(Shift_ADC < (ParaData.Basic_data.allclose + Shift_Step))
 	{
 		Motor_Out(CLOSE, DISABLE);
+		flag.overclose = 1;
+	}
+	else if(Shift_ADC > (ParaData.Basic_data.allopen - Shift_Step))
+	{
+		Motor_Out(OPEN, DISABLE);
+		flag.overopen = 1;
+		Shift_Status |= 0x01<<(CLOSE-1);
 	}
 	//切换ADC测量通道7通道为电流测量,4通道为位移测量
 	if(ADC_Counter >= 10)				//切换Channel_7(10次测量1次)
