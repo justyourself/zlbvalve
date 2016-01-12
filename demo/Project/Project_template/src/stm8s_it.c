@@ -182,14 +182,14 @@ INTERRUPT_HANDLER(EXTI_PORTE_IRQHandler, 7)
 		if(!GPIO_ReadInputPin(HEAT_PORT, REMOTE))
 		{
 			//低电平为远方状态
-			status = remote;				//远方状态
+			flag.local = remote;			//远方状态
 			LED_LightON(BLUELED);			//打开远方指示灯
 			LED_LightOFF(GREENLED);		//关闭就地指示灯
 		}
 		else
 		{
 			//高电平为就地状态
-			status = local;					//就地状态
+			flag.local = local;				//就地状态
 			LED_LightON(GREENLED);			//打开就地指示灯
 			LED_LightOFF(BLUELED);			//关闭远方指示灯			
 		}
@@ -477,7 +477,6 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 	{
 		Motor_Out(OPEN, DISABLE);
 		flag.overopen = 1;
-		Shift_Status |= 0x01<<(CLOSE-1);
 	}
 	//切换ADC测量通道7通道为电流测量,4通道为位移测量
 	if(ADC_Counter >= 10)				//切换Channel_7(10次测量1次)

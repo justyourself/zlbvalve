@@ -82,12 +82,12 @@ void LED_Init(void)
 	if(!GPIO_ReadInputPin(GPIOE,(GPIO_Pin_TypeDef)(REMOTE)))
 	{
 		LED_LightON(BLUELED);			//打开远方指示灯
-		status = remote;
+		flag.local = remote;
 	}
 	else
 	{
 		LED_LightON(GREENLED);			//打开就地指示灯
-		status = local;
+		flag.local = local;
 	}
         
 }
@@ -115,7 +115,6 @@ void InOut_Init(void)
 	//分合控制输出状态,0分合输出使能,1分合输出失能
 	flag.overclose = 0;
 	flag.overopen = 0;
-	Shift_Status = 0x00;
 	
 	//使能上升沿下降沿触发中断(远方就地为上升沿下降沿触发中断,电机过热中断为下降沿中断 )
 	EXTI_SetExtIntSensitivity(EXTI_PORT_GPIOE, EXTI_SENSITIVITY_RISE_FALL);

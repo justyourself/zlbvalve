@@ -614,9 +614,9 @@ void Display_TopMenu(void)
 	refresh = ENABLE;
 	//显示状态栏
 	if(ParaData.Basic_data.language)
-		Display_Statusbar(status, param_string[FatherIndex[0]],NORMAL);
+		Display_Statusbar(param_string[FatherIndex[0]],NORMAL);
 	else
-		Display_Statusbar(status, param_english[FatherIndex[0]],NORMAL);
+		Display_Statusbar(param_english[FatherIndex[0]],NORMAL);
 	//计算进度
 	switch(FatherIndex[0])
 	{
@@ -641,36 +641,40 @@ void Display_TopMenu(void)
 	
 }
 /***************************************************************************/
-//函数:	void Display_Statusbar(StatusType status, uint8_t *number, uint8_t colour)
+//函数:	void Display_Statusbar(uint8_t *number, uint8_t colour)
 //说明:	显示状态栏函数
-//输入: status 要显示的状态 number 要显示的编号 colour 编号是否需要反显
+//输入: number 要显示的编号 colour 编号是否需要反显
 //输出: 无
 //编辑: zlb
 //时间: 2015.12.13
 /***************************************************************************/
-void Display_Statusbar(StatusType status, uint8_t *number, uint8_t colour)
+void Display_Statusbar(uint8_t *number, uint8_t colour)
 {
 	uint8_t *string = NULL;
 	//显示字
-	switch(status)
+	switch(flag.local)
 	{
 		case local:
-		if(ParaData.Basic_data.language)
-			string = status_string[0];
+		if(flag.set)
+		{
+			if(ParaData.Basic_data.language)
+				string = status_string[2];
+			else
+				string = status_english[2];			
+		}
 		else
-			string = status_english[0];
+		{
+			if(ParaData.Basic_data.language)
+				string = status_string[0];
+			else
+				string = status_english[0];			
+		}		
 		break;
 		case remote:
 		if(ParaData.Basic_data.language)
 			string = status_string[1];
 		else
-			string = status_english[1];
-		break;
-		case set:
-		if(ParaData.Basic_data.language)
-			string = status_string[2];
-		else
-			string = status_english[2];
+			string = status_english[1];		
 		break;
 		default:
 		if(ParaData.Basic_data.language)
@@ -784,6 +788,11 @@ void Display_Basic(void)
 
 	refresh = DISABLE;
     //修改状态栏显示 Level1_Fun[FatherIndex[1]].Childrenms[i]
+    //设置状态
+	if(ParaData.Basic_data.language)
+		LCD_Display_Mixure(status_string[2], TYPE_12, STATUSBARLINE, STATUSBARCOLUMN, NORMAL);
+	else
+		LCD_Display_Mixure(status_english[2], TYPE_12, STATUSBARLINE, STATUSBARCOLUMN, NORMAL);
     LCD_Display_String(where[FatherIndex[layer]].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2+6, NORMAL);
     //显示分割线
 	LCD_Display_Line(2, 1);
@@ -848,7 +857,7 @@ void Display_Value(void)
 	//显示当前所在选项
 	LCD_Display_Mixure(where[FatherIndex[layer]].DisplayString, TYPE_12,MAINDISPLAYL, MAINDISPLAYC, NORMAL);
 	//找出自己的位置
-	
+	rate = GetMenu_Data(FatherIndex[layer - 1], FatherIndex[layer]);
 	//显示数据
 	sprintf((char *)datastr, "%.1f", rate);
 	//主显示区
@@ -863,39 +872,71 @@ void Display_Value(void)
 	
 }
 /***************************************************************************/
-//函数:	void Display_Valve(void)
-//说明:	显示菜单数据,对没有菜单的数据进行显示
-//输入: 无
-//输出: 无
+//函数:	float GetMenu_Data(uint8_t father, uint8_t item)
+//说明:	获取菜单数据函数
+//输入: father 父菜单 item 当前菜单选项
+//输出: 浮点值
 //编辑: zlb
 //时间: 2015.12.30
 /***************************************************************************/
-/*
-uint16_t GetMenu_Data(uint8_t father, uint8_t item)
+float GetMenu_Data(uint8_t father, uint8_t item)
 {
+	float outdata = 0;
 	uint16_t tempdata;
-	uint8_t *menudata = NULL;
+	uint16_t *menudata1 = NULL;
+	uint8_t *menudata2 = NULL;
 
 	switch(father)
 	{
 		case 0:			//基本菜单
 			//获取菜单数据地址
-			menudata = (uint8_t *)&ParaData.Basic_data.language;
-			tempdata = menudata[item*2];
+			menudata1 = (uint16_t *)&ParaData.Basic_data.language;
+			//需要获取ADC值
+			if(item == 1|| item == 2)
+			{
+				tempdata = Shift_ADC;
+				outdata = ParaData.Basic_data.allopen - ParaData.Basic_data.allclose;
+				outdata =(float) (Shift_ADC - ParaData.Basic_data.allclose )*100 / outdata;
+			}
+			else
+			{
+				tempdata = menudata1[item];
+				if(keyup)
+				{
+					keyup = 0;
+					if(tempdata < 1000)
+						tempdata++;
+					else 
+						tempdata = 0;
+				}
+				if(keydown)
+				{
+					if(tempdata > 0)
+						tempdata--;
+					else
+						tempdata = 0;
+				}
+				outdata = (float)tempdata / 10;
+			}
 			break;
 		case 1:			//高级菜单
 			//获取菜单数据地址
-			menudata = ParaData.Advancd_data.startoption;
+			menudata2 = (uint8_t *)&ParaData.Advancd_data.startoption;
+			tempdata = menudata2[item];
 		break;
 		case 2:			//出厂菜单
+			//获取菜单数据地址
+			menudata1 = (uint16_t *)&ParaData.Factory_data.password;
+			tempdata = menudata1[item];			
 		break;
 		default:
-		break;
-			
+			tempdata = 0;
+		break;		
 	}
 
+	return outdata;
 }
-*/
+
 void Set_Value(void)
 {
 	//找出自己的位置

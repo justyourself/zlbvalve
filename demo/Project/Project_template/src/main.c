@@ -109,6 +109,9 @@ void main(void)
 				Display(manyou + FatherIndex[layer]);
 				break;
 			case SET:
+				//远方状态不允许操作菜单
+				if(flag.local == remote)
+					break;
 				if((manyou + FatherIndex[layer])->Childrenms != NULL)
 				{
 					manyou = (manyou+FatherIndex[layer])->Childrenms;

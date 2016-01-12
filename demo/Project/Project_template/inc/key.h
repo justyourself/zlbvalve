@@ -18,7 +18,7 @@
 
 // 结构体定义
 //状态定义
-typedef enum {local, remote, set} StatusType;
+typedef enum {local, remote} StatusType;
 //状态结构体定义
 typedef struct _STATUS_FLAG_
 {
