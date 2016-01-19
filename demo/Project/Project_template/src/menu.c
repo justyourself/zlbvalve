@@ -24,9 +24,9 @@
 /******************************变量声明***********************************/
 MenuItem TopMenu[1];
 MenuItem Level1_Fun[3];
-MenuItem Advanced_Fun[14];
-MenuItem Basic_Fun[12];
-MenuItem Factory_Fun[13];
+MenuItem Advanced_Fun[ADVANCED_NUM];
+MenuItem Basic_Fun[BASIC_NUM];
+MenuItem Factory_Fun[FACTORY_NUM];
 MenuItem Language_Fun[2];
 MenuItem Fault_Fun[5];
 MenuItem Local_Fun[2];
@@ -101,20 +101,22 @@ uint8_t *const Level1_English[] =
 	{"Fact_set"},
 };
 //基本菜单显示
-MenuItem Basic_Fun[12] =
+MenuItem Basic_Fun[BASIC_NUM] =
 {
-	{12,NULL,"B01",Display_Basic,NULL,Language_Fun,Level1_Fun},
-	{12,NULL,"B02",Display_Basic,Display_Value,NULL,Level1_Fun},
-	{12,NULL,"B03",Display_Basic,Display_Value,NULL,Level1_Fun},
-	{12,NULL,"B04",Display_Basic,Display_Value,NULL,Level1_Fun},
-	{12,NULL,"B05",Display_Basic,Display_Value,NULL,Level1_Fun},
-	{12,NULL,"B06",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{12,NULL,"B07",Display_Basic,NULL,Fault_Fun,Level1_Fun},
-	{12,NULL,"B08",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{12,NULL,"B09",Display_Basic,NULL,Fault_Fun,Level1_Fun},
-	{12,NULL,"B10",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{12,NULL,"B11",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{12,NULL,"B12",Display_Basic,NULL,Local_Fun,Level1_Fun},       
+	{BASIC_NUM,NULL,"B01",Display_Basic,NULL,Language_Fun,Level1_Fun},
+	{BASIC_NUM,NULL,"B02",Display_Basic,Display_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B03",Display_Basic,Display_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B04",Display_Basic,Display_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B05",Display_Basic,Display_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B06",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B07",Display_Basic,NULL,Fault_Fun,Level1_Fun},
+	{BASIC_NUM,NULL,"B08",Display_Basic,Set_Value,NULL,Level1_Fun},
+#ifdef G_TYPE
+	{BASIC_NUM,NULL,"B09",Display_Basic,NULL,Fault_Fun,Level1_Fun},
+	{BASIC_NUM,NULL,"B10",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B11",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B12",Display_Basic,NULL,Local_Fun,Level1_Fun},  
+#endif
 };
 //基本菜单名称(中文)
 uint8_t *const Basic_Chinese[] =
@@ -127,10 +129,12 @@ uint8_t *const Basic_Chinese[] =
 	{"死区调整"},
 	{"信号故障类型"},
 	{"故障指定位置"},
+#ifdef G_TYPE
 	{"断电动作类型"},
 	{"断电指定位置"},
 	{"断电动作延时"},
 	{"远控手动设置"},
+#endif
 };
 //基本菜单名称(英文)
 uint8_t *const Basic_English[] =
@@ -143,87 +147,108 @@ uint8_t *const Basic_English[] =
 	{"Death_section"},
 	{"Sign_err"},
 	{"Sign_err_pos"},
+#ifdef G_TYPE
 	{"Power_off"},
 	{"Power_pos"},
 	{"Power_delay"},
 	{"Set_local"},
+#endif
 };
 //高级菜单显示
-MenuItem Advanced_Fun[14] = 
+MenuItem Advanced_Fun[ADVANCED_NUM] = 
 {
-	{14,NULL,"C01",Display_Basic,NULL,Logic_Fun,Level1_Fun},
-	{14,NULL,"C02",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{14,NULL,"C03",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{14,NULL,"C04",Display_Basic,NULL,ESD_Fun,Level1_Fun},
-	{14,NULL,"C05",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{14,NULL,"C06",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
-	{14,NULL,"C07",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
-	{14,NULL,"C08",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
-	{14,NULL,"C09",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
-	{14,NULL,"C10",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
-	{14,NULL,"C11",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
-	{14,NULL,"C12",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{14,NULL,"C13",Display_Basic,NULL,Signal_Fun,Level1_Fun},
-	{14,NULL,"C14",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C01",Display_Basic,NULL,Logic_Fun,Level1_Fun},
+#ifdef G_TYPE
+	{ADVANCED_NUM,NULL,"C02",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C03",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C04",Display_Basic,NULL,ESD_Fun,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C05",Display_Basic,Set_Value,NULL,Level1_Fun},
+#endif
+	{ADVANCED_NUM,NULL,"C06",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C07",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
+#ifdef G_TYPE
+	{ADVANCED_NUM,NULL,"C08",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C09",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C10",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C11",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
+#endif
+	{ADVANCED_NUM,NULL,"C12",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C13",Display_Basic,NULL,Signal_Fun,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C14",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C15",Display_Basic,Display_Warn,NULL,Level1_Fun},
 };
 //高级菜单名称(中文)
 uint8_t *const Advanced_Chinese[] =
 {
 	{"正反作用"},
+#ifdef G_TYPE
 	{"最大速度"},
 	{"最小速度"},
 	{"ESD类型"},
 	{"ESD定位"},
+#endif
 	{"报警1类型"},
 	{"报警2类型"},
+#ifdef G_TYPE
 	{"报警3类型"},
 	{"报警4类型"},
 	{"报警5类型"},
 	{"报警6类型"},
+#endif
 	{"报警定位"},
 	{"信号类型"},
 	{"设备地址"},
+	{"参数恢复"},
 };
 //高级菜单名称(英文)
 uint8_t *const Advanced_English[] =
 {
 	{"Logic"},
+#ifdef G_TYPE
 	{"Max_Speed"},
 	{"Min_Speed"},
 	{"ESD_type"},
 	{"ESD_pos"},
+#endif
 	{"Alarm_COM1"},
 	{"Alarm_COM2"},
+#ifdef G_TYPE
 	{"Alarm_COM3"},
 	{"Alarm_COM4"},
 	{"Alarm_COM5"},
 	{"Alarm_COM6"},
+#endif
 	{"Alarm_pos"},
 	{"Sign_type"},
 	{"Address"},
+	{"Reset"},
 };
 //出厂设置
-MenuItem Factory_Fun[13] = 
+MenuItem Factory_Fun[FACTORY_NUM] = 
 {
-	{13,NULL,"D01",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D02",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D03",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D04",Display_Basic,NULL,Unit_Fun,Level1_Fun},
-	{13,NULL,"D05",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D06",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D07",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D08",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D09",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D10",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D11",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D12",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{13,NULL,"D13",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D01",Display_Basic,Set_Value,NULL,Level1_Fun},
+#ifdef G_TYPE
+	{FACTORY_NUM,NULL,"D02",Display_Basic,Set_Value,NULL,Level1_Fun},
+#endif
+	{FACTORY_NUM,NULL,"D03",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D04",Display_Basic,NULL,Unit_Fun,Level1_Fun},
+	{FACTORY_NUM,NULL,"D05",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D06",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D07",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D08",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D09",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D10",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D11",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D12",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{FACTORY_NUM,NULL,"D13",Display_Basic,Set_Value,NULL,Level1_Fun},
 };
 //出厂菜单名称(中文)
 uint8_t *const Factory_Chinese[] =
 {
 	{"密码设置"},
+#ifdef G_TYPE
 	{"减速范围"},
+#endif
 	{"力矩校准"},
 	{"力矩单位"},
 	{"开阀力矩"},
@@ -240,7 +265,9 @@ uint8_t *const Factory_Chinese[] =
 uint8_t *const Factory_English[] =
 {
 	{"Change_Key"},
+#ifdef G_TYPE
 	{"Reduce"},
+#endif
 	{"Torque_adj"},
 	{"Touque_unit"},
 	{"Open_touque"},
@@ -511,15 +538,15 @@ void Init_Menu(void)
 		{
 			Level1_Fun[i].DisplayString = (uint8_t *)Level1_Chinese[i];
 		}
-		for(i=0;i<14;i++)
+		for(i=0;i<ADVANCED_NUM;i++)
 		{
 			Advanced_Fun[i].DisplayString = (uint8_t *)Advanced_Chinese[i];
 		}
-		for(i=0;i<12;i++)
+		for(i=0;i<BASIC_NUM;i++)
 		{
 			Basic_Fun[i].DisplayString = (uint8_t *)Basic_Chinese[i];
 		}
-		for(i=0;i<13;i++)
+		for(i=0;i<FACTORY_NUM;i++)
 		{
 			Factory_Fun[i].DisplayString = (uint8_t *)Factory_Chinese[i];
 		}
@@ -562,15 +589,15 @@ void Init_Menu(void)
 		{
 			Level1_Fun[i].DisplayString = (uint8_t *)Level1_English[i];
 		}
-		for(i=0;i<14;i++)
+		for(i=0;i<ADVANCED_NUM;i++)
 		{
 			Advanced_Fun[i].DisplayString = (uint8_t *)Advanced_English[i];
 		}
-		for(i=0;i<12;i++)
+		for(i=0;i<BASIC_NUM;i++)
 		{
 			Basic_Fun[i].DisplayString = (uint8_t *)Basic_English[i];
 		}
-		for(i=0;i<13;i++)
+		for(i=0;i<FACTORY_NUM;i++)
 		{
 			Factory_Fun[i].DisplayString = (uint8_t *)Factory_English[i];
 		}
@@ -760,7 +787,7 @@ void Display_Level1(void)
 	//显示分割线
 	LCD_Display_Line(2, 1);
 	//清除主显示区
-	LCD_Display_String("     ",TYPE_16,4,50,NORMAL);
+	LCD_Display_String("        ",TYPE_16,4,50,NORMAL);
     //清除进度条
     Clear_Progressbar();
     
@@ -942,6 +969,9 @@ void Set_Value(void)
 	//找出自己的位置
 	
 	
+}
+void Display_Warn(void)
+{
 }
 void Set_Save (void)
 {

@@ -17,6 +17,21 @@
 #include "key.h"
 
 // 宏定义
+//菜单型号选择
+#define MT_TYPE					1				//MT型
+//#define G_TYPE					1				//G型
+
+//各级菜单项个数
+#if MT_TYPE
+#define BASIC_NUM				8				//基本菜单
+#define ADVANCED_NUM			7				//高级菜单
+#define FACTORY_NUM			12				//出厂设置菜单
+#else if G_TYPE
+#define BASIC_NUM				12				//基本菜单
+#define ADVANCED_NUM			15				//高级菜单
+#define FACTORY_NUM			13				//出厂设置菜单
+#endif
+//显示位置
 #define STATUSBARLINE			1				//状态栏起始行
 #define STATUSBARCOLUMN		2				//状态栏起始列
 #define STATUSBARCOLUMN2		100				//状态栏第二起始列
@@ -85,6 +100,7 @@ void Set_Save (void);
 void Set_Value(void);
 void Display_Value(void);
 void Language_Set (void);
+void Display_Warn(void);
 
 
 #endif//__MENU_H
