@@ -73,7 +73,7 @@ uint8_t  refresh = ENABLE;						//刷新菜单标志
 uint8_t  keyup = 0;								//数据显示界面按键值传递
 uint8_t  keydown = 0;
 uint8_t  keyset = 0;
-
+ParamStr ParaData;								//菜单保存数据结构体
 //Top菜单显示(进入条件,需要在就地状态下,按下SET键)
 MenuItem TopMenu[1] = 
 {
@@ -108,13 +108,13 @@ MenuItem Basic_Fun[BASIC_NUM] =
 	{BASIC_NUM,NULL,"B03",Display_Basic,Display_Value,NULL,Level1_Fun},
 	{BASIC_NUM,NULL,"B04",Display_Basic,Display_Value,NULL,Level1_Fun},
 	{BASIC_NUM,NULL,"B05",Display_Basic,Display_Value,NULL,Level1_Fun},
-	{BASIC_NUM,NULL,"B06",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B06",Display_Basic,Display_Value,NULL,Level1_Fun},
 	{BASIC_NUM,NULL,"B07",Display_Basic,NULL,Fault_Fun,Level1_Fun},
-	{BASIC_NUM,NULL,"B08",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B08",Display_Basic,Display_Value,NULL,Level1_Fun},
 #ifdef G_TYPE
 	{BASIC_NUM,NULL,"B09",Display_Basic,NULL,Fault_Fun,Level1_Fun},
-	{BASIC_NUM,NULL,"B10",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{BASIC_NUM,NULL,"B11",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B10",Display_Basic,Display_Value,NULL,Level1_Fun},
+	{BASIC_NUM,NULL,"B11",Display_Basic,Display_Value,NULL,Level1_Fun},
 	{BASIC_NUM,NULL,"B12",Display_Basic,NULL,Local_Fun,Level1_Fun},  
 #endif
 };
@@ -163,19 +163,20 @@ MenuItem Advanced_Fun[ADVANCED_NUM] =
 	{ADVANCED_NUM,NULL,"C03",Display_Basic,Set_Value,NULL,Level1_Fun},
 	{ADVANCED_NUM,NULL,"C04",Display_Basic,NULL,ESD_Fun,Level1_Fun},
 	{ADVANCED_NUM,NULL,"C05",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C06",Display_Basic,Set_Value,NULL,Level1_Fun},
 #endif
-	{ADVANCED_NUM,NULL,"C06",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
 	{ADVANCED_NUM,NULL,"C07",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
-#ifdef G_TYPE
 	{ADVANCED_NUM,NULL,"C08",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
+#ifdef G_TYPE
 	{ADVANCED_NUM,NULL,"C09",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
 	{ADVANCED_NUM,NULL,"C10",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
 	{ADVANCED_NUM,NULL,"C11",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C12",Display_Basic,NULL,Alarm_Fun,Level1_Fun},
 #endif
-	{ADVANCED_NUM,NULL,"C12",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{ADVANCED_NUM,NULL,"C13",Display_Basic,NULL,Signal_Fun,Level1_Fun},
-	{ADVANCED_NUM,NULL,"C14",Display_Basic,Set_Value,NULL,Level1_Fun},
-	{ADVANCED_NUM,NULL,"C15",Display_Basic,Display_Warn,NULL,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C13",Display_Basic,Display_Value,NULL,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C14",Display_Basic,NULL,Signal_Fun,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C15",Display_Basic,Set_Value,NULL,Level1_Fun},
+	{ADVANCED_NUM,NULL,"C16",Display_Basic,Display_Warn,NULL,Level1_Fun},
 };
 //高级菜单名称(中文)
 uint8_t *const Advanced_Chinese[] =
@@ -186,6 +187,7 @@ uint8_t *const Advanced_Chinese[] =
 	{"最小速度"},
 	{"ESD类型"},
 	{"ESD定位"},
+	{"开机选项"},
 #endif
 	{"报警1类型"},
 	{"报警2类型"},
@@ -209,6 +211,7 @@ uint8_t *const Advanced_English[] =
 	{"Min_Speed"},
 	{"ESD_type"},
 	{"ESD_pos"},
+	{"Start_option"}
 #endif
 	{"Alarm_COM1"},
 	{"Alarm_COM2"},
@@ -918,12 +921,12 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 		case 0:			//基本菜单
 			//获取菜单数据地址
 			menudata1 = (uint16_t *)&ParaData.Basic_data.language;
-			//需要获取ADC值
+			//需要获取ADC值,根据默认全关与全开的比例计算百分比(全开90%,全关10%)
 			if(item == 1|| item == 2)
 			{
 				tempdata = Shift_ADC;
 				outdata = ParaData.Basic_data.allopen - ParaData.Basic_data.allclose;
-				outdata =(float) (Shift_ADC - ParaData.Basic_data.allclose )*100 / outdata;
+				outdata =(float) (tempdata - ParaData.Basic_data.allclose )*100 / outdata;
 			}
 			else
 			{
@@ -938,6 +941,7 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 				}
 				if(keydown)
 				{
+					keydown = 0;
 					if(tempdata > 0)
 						tempdata--;
 					else
@@ -948,8 +952,25 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 			break;
 		case 1:			//高级菜单
 			//获取菜单数据地址
-			menudata2 = (uint8_t *)&ParaData.Advancd_data.startoption;
+			menudata2 = (uint8_t *)&ParaData.Advancd_data.logic;
 			tempdata = menudata2[item];
+			if(keyup)
+			{
+				keyup = 0;
+				if(tempdata < 1000)
+					tempdata++;
+				else 
+					tempdata = 0;
+			}
+			if(keydown)
+			{
+				keydown = 0;
+				if(tempdata > 0)
+					tempdata--;
+				else
+					tempdata = 0;
+			}
+			outdata = (float)tempdata / 10;
 		break;
 		case 2:			//出厂菜单
 			//获取菜单数据地址
@@ -967,8 +988,29 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 void Set_Value(void)
 {
 	//找出自己的位置
+	uint8_t level = FatherIndex[layer-2];
+	//选择当前单元
+	uint8_t item = FatherIndex[layer];
+	uint8_t father = FatherIndex[layer - 1];
+	uint16_t *menudata1 = NULL;
+	uint8_t *menudata2 = NULL;
 	
-	
+	switch(level)
+	{
+		case 0:
+		menudata1 = (uint16_t *)&ParaData.Basic_data.language;
+		menudata1[father] = item;
+		break;
+		case 1:
+		menudata2 = (uint8_t *)&ParaData.Advancd_data.logic;
+		menudata2[father] = item;
+		break;
+		case 2:
+		menudata1 = (uint16_t *)&ParaData.Factory_data.password;
+		menudata1[father] = item;
+		default:
+		break;
+	}
 }
 void Display_Warn(void)
 {

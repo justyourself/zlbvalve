@@ -17,7 +17,7 @@
 
 
 /******************************变量定义***********************************/
-ParamStr ParaData;						//菜单保存数据结构体
+
 
 
 
@@ -103,28 +103,37 @@ void Default_Data(void)
 	paratmp->Basic_data.deadzone = 3;			//死区调整值
 	paratmp->Basic_data.errtype = close;		//故障类型关闭,全开,全关,保持,指定,
 	paratmp->Basic_data.errplace = 50;			//故障时移动至指定位置
+#ifdef G_TYPE
 	paratmp->Basic_data.powerofftype = close;	//断电类型,同故障类型
 	paratmp->Basic_data.poweroffplace = 50;		//断电时移动至指定位置
+	paratmp->Basic_data.poweroffdelay = 50;		//断电时移动至指定位置	
 	paratmp->Basic_data.rlstatus = local;		//本地或远方状态(MT系列为硬件控制)
+#endif
 	//高级菜单默认设置
-	paratmp->Advancd_data.startoption = 1;		//开机选项,0,本地,1,远方
 	paratmp->Advancd_data.logic = 0;			//正反作用,0,正作用,1,反作用
+#ifdef G_TYPE
 	paratmp->Advancd_data.maxspeed = 2;			//最大速度
 	paratmp->Advancd_data.minspeed = 1;			//最小速度
 	paratmp->Advancd_data.esdtype = close;		//ESD类型,同故障类型
 	paratmp->Advancd_data.esdplace = 50;		//ESD时移动至指定位置
+	paratmp->Advancd_data.startoption = 1;		//开机选项,0,本地,1,远方
+#endif
 	paratmp->Advancd_data.alarm1 = close;		//报警1类型:关闭,全开,全关,无给信号,关过力矩,开过力矩,指定位置,综合报警
-	paratmp->Advancd_data.alarm2 = close;		//报警1类型	
-	paratmp->Advancd_data.alarm3 = close;		//报警1类型	
-	paratmp->Advancd_data.alarm4 = close;		//报警1类型	
-	paratmp->Advancd_data.alarm5 = close;		//报警1类型
-	paratmp->Advancd_data.alarm6 = close;		//报警1类型
+	paratmp->Advancd_data.alarm2 = close;		//报警2类型	
+#ifdef G_TYPE
+	paratmp->Advancd_data.alarm3 = close;		//报警3类型	
+	paratmp->Advancd_data.alarm4 = close;		//报警4类型	
+	paratmp->Advancd_data.alarm5 = close;		//报警5类型
+	paratmp->Advancd_data.alarm6 = close;		//报警6类型
+#endif
 	paratmp->Advancd_data.alarmplace = 50;		//指定位置报警中的位置
 	paratmp->Advancd_data.signaltype = 0;		//0,4~20mA信号,1,0~20mA信号,2,0~10V信号
 	paratmp->Advancd_data.addr = 3200;			//设备地址,U16
 	//出厂设置菜单
-	paratmp->Factory_data.password = 110;		//密码设置				
+	paratmp->Factory_data.password = 110;		//密码设置		
+#ifdef G_TYPE
 	paratmp->Factory_data.slowrange = 3;		//减速范围
+#endif
 	paratmp->Factory_data.moment = 1;			//力矩校准
 	paratmp->Factory_data.momentunits = 0;		//力矩单位 0,Nm;1,N
   	paratmp->Factory_data.openmoment = 5;		//开力矩
