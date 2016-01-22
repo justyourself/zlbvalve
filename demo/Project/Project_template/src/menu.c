@@ -211,7 +211,7 @@ uint8_t *const Advanced_English[] =
 	{"Min_Speed"},
 	{"ESD_type"},
 	{"ESD_pos"},
-	{"Start_option"}
+	{"Start_option"},
 #endif
 	{"Alarm_COM1"},
 	{"Alarm_COM2"},
@@ -652,7 +652,7 @@ void Display_TopMenu(void)
 	{
 		case 0:				//计算开度值
 			rate = ParaData.Basic_data.allopen - ParaData.Basic_data.allclose;
-			rate =(float) (Shift_ADC - ParaData.Basic_data.allclose )*100 / rate;
+			rate =(float) (ValidADC.shift - ParaData.Basic_data.allclose )*100 / rate;
 			//rate = 45.1;
 			break;
 		case 1:				//计算温度值
@@ -924,7 +924,7 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 			//需要获取ADC值,根据默认全关与全开的比例计算百分比(全开90%,全关10%)
 			if(item == 1|| item == 2)
 			{
-				tempdata = Shift_ADC;
+				tempdata = ValidADC.shift;
 				outdata = ParaData.Basic_data.allopen - ParaData.Basic_data.allclose;
 				outdata =(float) (tempdata - ParaData.Basic_data.allclose )*100 / outdata;
 			}

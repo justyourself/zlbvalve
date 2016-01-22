@@ -155,16 +155,6 @@ void main(void)
 				}
 				break;
 		}
-		//判断分合输出是否失能,如果失能但是分合位置在行程范围之内,将去除失能
-//		if(Shift_Status)
-//		{
-//			if((Shift_ADC > ParaData.Basic_data.allclose) && (Shift_ADC < ParaData.Basic_data.allopen))
-//			{
-//				Motor_Out(OPEN, ENABLE);
-//				Motor_Out(CLOSE, ENABLE);
-//				Shift_Status = 0;
-//			}
-//		}
 	}
 }
 #ifdef USE_FULL_ASSERT

@@ -19,9 +19,10 @@
 /******************************变量定义***********************************/
 uint8_t ADC_Counter = 0;
 uint8_t ADC_Channel = ADC2_CHANNEL_4;		//默认ADC为第四通道,位移采集
-uint16_t Shift_ADC = 0;					//位移ADC值
+ADCValueStr RealADC;						//实时ADC值
+ADCValueStr UnitADC;						//死区ADC值
+ADCValueStr ValidADC;						//有效ADC值
 FlagTypeStr flag = 0;					    //状态标志
-uint16_t Current_ADC = 0;					//电流ADC值
 uint16_t Shift_Step = 20;					//位移ADC偏移多少开始停止电机转动
 uint8_t status;								//当前状态(远方或就地)
 uint32_t light_flag = 1;					//背光灯标志,为0时不进行计数
@@ -184,6 +185,13 @@ void ADC2_Shift_Init(ADC2_Channel_TypeDef ADC2_Channel, ADC2_SchmittTrigg_TypeDe
 	ADC2_Cmd(ENABLE);
 	//使能中断
 	ADC2_ITConfig(ENABLE);
+	//初始化ADC参数
+	RealADC.current = 0;
+	RealADC.shift = 0;
+	UnitADC.current = 0;
+	//全关与全开数据设定之后需要更新该数值
+	UnitADC.shift = (ParaData.Basic_data.allopen - ParaData.Basic_data.allclose)/100;
+	UnitADC.shift = (ParaData.Basic_data.deadzone * UnitADC.shift)/10;
 }
 /***************************************************************************/
 //函数:	void ADC_Shift_Init(void)
@@ -272,6 +280,47 @@ void Motor_Out(uint8_t action, FunctionalState statu)
 	{
 		GPIO_WriteLow(OUT_PORT, action);
 	}
+}
+/***************************************************************************/
+//函数:	void Shift_Protect(void)
+//说明:	位移保护程序
+//输入: 无
+//输出: 无
+//编辑: zlb
+//时间: 2016.1.23
+/***************************************************************************/
+void Shift_Protect(void)
+{
+	//计算是否超过开度值(不确定开关AD值的大小关系,需要添加比较程序)
+	if(ValidADC.shift < (ParaData.Basic_data.allclose + Shift_Step))
+	{
+		Motor_Out(CLOSE, DISABLE);
+		flag.overclose = 1;
+	}
+	else if(ValidADC.shift > (ParaData.Basic_data.allopen - Shift_Step))
+	{
+		Motor_Out(OPEN, DISABLE);
+		flag.overopen = 1;
+	}
+	else
+	{
+		Motor_Out(CLOSE, ENABLE);
+		Motor_Out(OPEN, ENABLE);
+		flag.overopen = 0;
+		flag.overclose = 0;
+	}
+}
+/***************************************************************************/
+//函数:	void Current_Protect(void)
+//说明:	过电流保护
+//输入: 无
+//输出: 无
+//编辑: zlb
+//时间: 2016.1.23
+/***************************************************************************/
+void Current_Protect(void)
+{
+	//计算是否过流
 }
 
 

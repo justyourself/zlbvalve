@@ -460,24 +460,26 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 	//读取ADC采集值
 	if(ADC_Channel == ADC2_CHANNEL_4)
 	{
-		Shift_ADC = ADC2_GetConversionValue();
+		RealADC.shift = ADC2_GetConversionValue();
 	}
 	else
 	{
-		Current_ADC = ADC2_GetConversionValue();
+		RealADC.current = ADC2_GetConversionValue();
 	}
-	//计算是否过流
-	//计算是否超过开度值(不确定开关AD值的大小关系,需要添加比较程序)
-	if(Shift_ADC < (ParaData.Basic_data.allclose + Shift_Step))
+	//防止ADC采集值抖动
+	if(RealADC.shift > ValidADC.shift)
 	{
-		Motor_Out(CLOSE, DISABLE);
-		flag.overclose = 1;
+		if((RealADC.shift - ValidADC.shift) >= UnitADC.shift)
+			ValidADC.shift = RealADC.shift;
 	}
-	else if(Shift_ADC > (ParaData.Basic_data.allopen - Shift_Step))
+	else
 	{
-		Motor_Out(OPEN, DISABLE);
-		flag.overopen = 1;
+		if((ValidADC.shift - RealADC.shift) >= UnitADC.shift)
+			ValidADC.shift = RealADC.shift;		
 	}
+	//判断保护
+	Shift_Protect();
+	Current_Protect();
 	//切换ADC测量通道7通道为电流测量,4通道为位移测量
 	if(ADC_Counter >= 10)				//切换Channel_7(10次测量1次)
 	{
@@ -539,14 +541,19 @@ INTERRUPT_HANDLER(TIM6_UPD_OVF_TRG_IRQHandler, 23)
   */
   //开始ADC转换
   ADC2_StartConversion();
+  //背光灯
   if(light_flag)
-  		light_flag++;
-  //判断是否超过待机时间
-  if(light_flag > LOWPOWER)
   	{
-  		light_flag = 0;
-		LCD_BacklightCmd(DISABLE);
+  		light_flag++;
+		//判断是否超过待机时间
+		if(light_flag > LOWPOWER)
+	  	{
+	  		light_flag = 0;
+			LCD_BacklightCmd(DISABLE);
+	  	}
   	}
+  //
+  
   //清除中断标志
   TIM4_ClearITPendingBit(TIM4_IT_UPDATE);
 }

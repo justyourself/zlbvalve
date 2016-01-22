@@ -100,7 +100,7 @@ void Default_Data(void)
 	paratmp->Basic_data.allclose = 100;			//全关值,需要根据实际进行调整设置
 	paratmp->Basic_data.out4ma = 5;				//输出4mA校准
 	paratmp->Basic_data.out20ma = 5;			//输出20mA校准	
-	paratmp->Basic_data.deadzone = 3;			//死区调整值
+	paratmp->Basic_data.deadzone = 2;			//死区调整值0.2
 	paratmp->Basic_data.errtype = close;		//故障类型关闭,全开,全关,保持,指定,
 	paratmp->Basic_data.errplace = 50;			//故障时移动至指定位置
 #ifdef G_TYPE

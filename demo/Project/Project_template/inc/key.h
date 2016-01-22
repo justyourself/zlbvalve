@@ -31,6 +31,12 @@ typedef struct _STATUS_FLAG_
 	uint8_t light:1;				//面板背光状态标志,0,背光亮,1,背光灭
 	uint8_t reserve:1;				//预留
 }FlagTypeStr;
+//ADC采集值定义
+typedef struct _ADC_VALUE_
+{
+	uint16_t shift;					//移位ADC值
+	uint16_t current;				//电流ADC值
+}ADCValueStr;
 // 宏定义
 // 参数
 #define LOWPOWER	420000u			//7*60*1000 7min背光时间
@@ -74,12 +80,13 @@ typedef struct _STATUS_FLAG_
 //变量声明
 extern uint8_t ADC_Counter ;		//ADC通道采集计数器
 extern uint8_t ADC_Channel ;		//默认ADC为第四通道,位移采集
-extern uint16_t Shift_ADC ;		//位移ADC值
-extern uint16_t Current_ADC ;		//电流ADC值
 extern uint16_t Shift_Step ;		//位移ADC偏移多少开始停止电机转动
 extern uint8_t status;				//当前状态(远方或就地)
 extern uint32_t light_flag;		//背光灯标志
 extern FlagTypeStr flag;			//状态标志
+extern ADCValueStr ValidADC;		//有效ADC值
+extern ADCValueStr RealADC;			//实时ADC值
+extern ADCValueStr UnitADC;			//死区ADC值
 //函数声明
 void Delay(uint32_t ms);
 void Key_Init(void);
@@ -91,7 +98,8 @@ void TIM4_Init(void);
 uint8_t Analysis_key(uint8_t key);
 void Motor_Out(uint8_t action, FunctionalState statu);
 void ADC2_Shift_Init(ADC2_Channel_TypeDef ADC2_Channel, ADC2_SchmittTrigg_TypeDef ADC2_SchmittTrigg_Channel);
-
+void Shift_Protect(void);
+void Current_Protect(void);
 
 
 
