@@ -20,6 +20,7 @@
 //菜单型号选择
 #define MT_TYPE					1				//MT型
 //#define G_TYPE					1				//G型
+//#define CLEAN_EEPROM			1				//清除EEPROM
 
 //各级菜单项个数
 #if MT_TYPE
@@ -128,6 +129,12 @@ typedef struct _PARAM_STR_
 	uint16_t CRC;						//CRC校验数据
 	
 }ParamStr;
+//字摸结构体
+typedef struct _TYPE_1332_
+{
+	uint8_t Index[2];					//索引机器码
+	uint8_t Matrix[60];			        //字模数据
+}type_1332;
 //变量声明
 extern uint8_t keyset;
 extern uint8_t keyup;								   //数据显示界面按键值传递
@@ -139,6 +146,7 @@ extern uint8_t layer;
 extern MenuItem *manyou;								//变量用来漫游真个菜单//当前菜单所在层
 extern MenuItem TopMenu[1];
 extern ParamStr ParaData;								//菜单保存数据结构体
+extern const type_1332 specistring[];					//13*32字符
 //函数声明
 void Init_Menu(void);
 void Display(MenuItem *menu); 
@@ -168,11 +176,10 @@ void Display_Fault(void);
 void Display_Location(void);
 void Display_Valve(void);
 void Display_Param(void);
-void Set_Save (void);
 void Set_Value(void);
 void Display_Value(void);
-void Language_Set (void);
 void Display_Warn(void);
-
+void Save_Value (float rate);
+void Display_Save(uint8_t Line, uint8_t Column);
 
 #endif//__MENU_H

@@ -29,7 +29,7 @@ typedef struct _STATUS_FLAG_
 	uint8_t local:1;				//电机远方就地状态标志,0,就地,1,远方
 	uint8_t set:1;					//菜单设置状态标志,0,普通,1,设置
 	uint8_t light:1;				//面板背光状态标志,0,背光亮,1,背光灭
-	uint8_t reserve:1;				//预留
+	uint8_t fresh:1;				//菜单刷新页面标志,0,普通,1,刷新屏幕
 }FlagTypeStr;
 //ADC采集值定义
 typedef struct _ADC_VALUE_
@@ -46,8 +46,8 @@ typedef struct _ADC_VALUE_
 #define HR3			GPIO_PIN_7		//G7口 SET
 #define HR4			GPIO_PIN_4		//E4口 UP
 // KEY键值定义
-#define UP			0xD0			//UP 按键键值
-#define DOWN		0xE0			//DOWN 按键键值
+#define UP			0xE0			//UP 按键键值
+#define DOWN		0xD0			//DOWN 按键键值
 #define ESC			0xB0			//ESC 按键键值
 #define SET			0x70			//SET 按键键值
 // LED 定义

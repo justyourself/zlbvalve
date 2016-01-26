@@ -95,13 +95,13 @@ void main(void)
 		// 无组合键功能
 		switch(key)
 		{
-			case UP:
+			case DOWN:
 				FatherIndex[layer]++;
 				if(FatherIndex[layer] > (manyou->MenuCount -1))
 					FatherIndex[layer] = 0;
 				Display(manyou + FatherIndex[layer]);
 				break;
-			case DOWN:
+			case UP:
 				if(FatherIndex[layer] == 0)
 					FatherIndex[layer] = (manyou->MenuCount -1);
 				else
@@ -110,8 +110,8 @@ void main(void)
 				break;
 			case SET:
 				//远方状态不允许操作菜单//调试屏蔽
-//				if(flag.local == remote)
-//					break;
+				if(flag.local == remote)
+					break;
 				if((manyou + FatherIndex[layer])->Childrenms != NULL)
 				{
 					manyou = (manyou+FatherIndex[layer])->Childrenms;
@@ -135,6 +135,7 @@ void main(void)
 				else if(dofunflag == ENABLE)
 				{
 					dofunflag	= DISABLE;
+					flag.fresh = DISABLE;
 					Display(manyou + FatherIndex[layer]);
 				}
 				else
@@ -149,7 +150,10 @@ void main(void)
 				{
 					//刷新页面
 					if(dofunflag == ENABLE)
-						Run(manyou + FatherIndex[layer]);
+					{
+						flag.fresh = ENABLE;
+						Run(manyou + FatherIndex[layer]);	
+					}
 					else
 						Display(manyou);
 				}

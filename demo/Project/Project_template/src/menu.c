@@ -653,7 +653,7 @@ void Display_TopMenu(void)
 		case 0:				//计算开度值
 			rate = ParaData.Basic_data.allopen - ParaData.Basic_data.allclose;
 			rate =(float) (ValidADC.shift - ParaData.Basic_data.allclose )*100 / rate;
-			//rate = 45.1;
+//			rate = 45.1;
 			break;
 		case 1:				//计算温度值
 			//rate = ;
@@ -665,6 +665,7 @@ void Display_TopMenu(void)
 	sprintf((char *)datastr, "%.1f%%", rate);
 	//主显示区
 	LCD_Display_String(datastr,TYPE_16,4,50,NORMAL);
+//	LCD_Display_String(datastr,TYPE_1532,4,35,NORMAL);
 	
 	//显示进度条
 	Display_Progressbar((uint8_t)rate);
@@ -846,25 +847,6 @@ void Display_Basic(void)
 	}
 }
 /***************************************************************************/
-//函数:	void Language_Set (void)
-//说明:	语言设置,不需要切换显示界面，只需要保存选择即可
-//输入: 无
-//输出: 无
-//编辑: zlb
-//时间: 2015.12.30
-/***************************************************************************/
-void Language_Set (void)
-{
-	refresh = DISABLE;
-	//修改状态栏
-	
-	//设置语言选项
-
-	//退回上级菜单
-	layer --;
-	manyou = (manyou+FatherIndex[layer])->Parentms;
-}
-/***************************************************************************/
 //函数:	void Display_Valve(void)
 //说明:	显示菜单数据,对没有菜单的数据进行显示
 //输入: 无
@@ -877,13 +859,16 @@ void Display_Value(void)
 	MenuItem *where = manyou;
 	float rate = 20.1;
 	uint8_t datastr[5] = {0};
+	uint16_t crc;
+	refresh = ENABLE;
 
 	//修改状态栏显示
 	LCD_Display_String(where[FatherIndex[layer]].Status, TYPE_12,STATUSBARLINE, STATUSBARCOLUMN2+6, NORMAL);
     //显示分割线
 	LCD_Display_Line(2, 1);
 	//清除当前主显示区的数据
-	LCD_CleanL2L(3,8);
+	if(flag.fresh == DISABLE)
+		LCD_CleanL2L(3,8);
 	//显示当前所在选项
 	LCD_Display_Mixure(where[FatherIndex[layer]].DisplayString, TYPE_12,MAINDISPLAYL, MAINDISPLAYC, NORMAL);
 	//找出自己的位置
@@ -897,7 +882,13 @@ void Display_Value(void)
 	{
 		keyset --;
 		//按下SET按键,将数据保存(先转换后保存)
-		
+		Save_Value(rate);
+		Display_Save(VALUEL,VALUEC-16);
+		crc = CRC_JY((uint8_t *)&ParaData, sizeof(ParamStr)-2);
+		ParaData.CRC = crc;
+		WriteString(PARAMBLOCK, sizeof(ParamStr), (uint8_t *)&ParaData);
+        Delay(30000);
+		LCD_CleanL2L(VALUEL,VALUEL+1);	
 	}
 	
 }
@@ -912,7 +903,7 @@ void Display_Value(void)
 float GetMenu_Data(uint8_t father, uint8_t item)
 {
 	float outdata = 0;
-	uint16_t tempdata;
+	static uint16_t tempdata;
 	uint16_t *menudata1 = NULL;
 	uint8_t *menudata2 = NULL;
 
@@ -924,13 +915,15 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 			//需要获取ADC值,根据默认全关与全开的比例计算百分比(全开90%,全关10%)
 			if(item == 1|| item == 2)
 			{
-				tempdata = ValidADC.shift;
 				outdata = ParaData.Basic_data.allopen - ParaData.Basic_data.allclose;
-				outdata =(float) (tempdata - ParaData.Basic_data.allclose )*100 / outdata;
+				outdata =(float) (ValidADC.shift - ParaData.Basic_data.allclose )*100 / outdata;
 			}
 			else
 			{
-				tempdata = menudata1[item];
+				if(flag.fresh == DISABLE)
+				{
+					tempdata = menudata1[item];
+				}
 				if(keyup)
 				{
 					keyup = 0;
@@ -953,7 +946,10 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 		case 1:			//高级菜单
 			//获取菜单数据地址
 			menudata2 = (uint8_t *)&ParaData.Advancd_data.logic;
-			tempdata = menudata2[item];
+			if(flag.fresh == DISABLE)
+			{
+				tempdata = menudata2[item];
+			}
 			if(keyup)
 			{
 				keyup = 0;
@@ -975,7 +971,10 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 		case 2:			//出厂菜单
 			//获取菜单数据地址
 			menudata1 = (uint16_t *)&ParaData.Factory_data.password;
-			tempdata = menudata1[item];			
+			if(flag.fresh == DISABLE)
+			{
+				tempdata = menudata1[item];
+			}			
 		break;
 		default:
 			tempdata = 0;
@@ -984,7 +983,14 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 
 	return outdata;
 }
-
+/***************************************************************************/
+//函数:	void Set_Value(void)
+//说明:	获取菜单数据函数
+//输入: father 父菜单 item 当前菜单选项
+//输出: 浮点值
+//编辑: zlb
+//时间: 2015.12.30
+/***************************************************************************/
 void Set_Value(void)
 {
 	//找出自己的位置
@@ -1012,12 +1018,131 @@ void Set_Value(void)
 		break;
 	}
 }
+/***************************************************************************/
+//函数:	void Display_Warn(void)
+//说明:	提示恢复参数弹窗,确认后恢复默认参数并返回至当前菜单
+//输入: 无
+//输出: 无
+//编辑: zlb
+//时间: 2015.1.26
+/***************************************************************************/
 void Display_Warn(void)
-{
-}
-void Set_Save (void)
-{
+{	
+	//需要刷新界面来判断当前按键值
+	refresh = ENABLE;
+
+	if(flag.fresh == DISABLE)
+	{
+		LCD_CleanL2L(3,8);
+	}
+	//显示当前所在选项
+	if(ParaData.Basic_data.language)
+	{
+		LCD_Display_Mixure("确认恢复默认参数?", TYPE_12,4,20 , NORMAL);
+	}
+	else
+	{
+		LCD_Display_String("Reset?", TYPE_12,4, 20, NORMAL);
+	}
+
+	if(keyset)
+	{
+		keyset = 0;
+		//从默认数据存储区读取数据
+		ReadString(DEFAULTBLOCK, sizeof(ParamStr), (uint8_t *)&ParaData);
+		//保存到菜单数据块中
+		WriteString(PARAMBLOCK, sizeof(ParamStr), (uint8_t *)&ParaData);
+		dofunflag	= DISABLE;
+		flag.fresh = DISABLE;
+		Display(manyou + FatherIndex[layer]);
+	}
 	
+}
+/***************************************************************************/
+//函数:	void Display_Code(void)
+//说明:	提示密码输入
+//输入: 无
+//输出: 无
+//编辑: zlb
+//时间: 2015.1.26
+/***************************************************************************/
+void Display_Code(void)
+{
+	//需要刷新界面来判断当前按键值
+	refresh = ENABLE;
+
+	if(flag.fresh == DISABLE)
+	{
+		LCD_CleanL2L(3,8);
+	}
+	//显示当前所在选项
+	if(ParaData.Basic_data.language)
+	{
+		LCD_Display_Mixure("请输入密码!", TYPE_12,4, 2, NORMAL);
+	}
+	else
+	{
+		LCD_Display_String("Enter Password!", TYPE_12,4, 2, NORMAL);
+	}
+	
+}
+/***************************************************************************/
+//函数:	void Display_Save(uint8_t Line, uint8_t Column)
+//说明:	保存成功界面
+//输入: line 界面显示所在行 column 界面显示所在列
+//输出: 浮点值
+//编辑: zlb
+//时间: 2015.12.30
+/***************************************************************************/
+void Display_Save(uint8_t Line, uint8_t Column)
+{
+	//清除当前显示
+	LCD_CleanL2L(Line,Line+1);
+	//显示当前所在选项
+	if(ParaData.Basic_data.language)
+	{
+		LCD_Display_Mixure("保存成功!", TYPE_12,Line, Column, NORMAL);
+	}
+	else
+	{
+		LCD_Display_String("SUCCESS!", TYPE_12,Line, Column, NORMAL);
+	}
+	
+}
+/***************************************************************************/
+//函数:	void Save_Value (float rate)
+//说明:	保存数据
+//输入: rate为需要保存的数据
+//输出: 无
+//编辑: zlb
+//时间: 2015.1.24
+/***************************************************************************/
+void Save_Value (float rate)
+{
+	//找出自己的位置
+	uint8_t level = FatherIndex[layer-1];
+	//选择当前单元
+	uint8_t item = FatherIndex[layer];
+	uint16_t *menudata1 = NULL;
+	uint8_t *menudata2 = NULL;
+	uint16_t temp = (uint16_t)(rate * 10);
+		
+	switch(level)
+	{
+		case 0:
+		menudata1 = (uint16_t *)&ParaData.Basic_data.language;
+		menudata1[item] = temp;
+		break;
+		case 1:
+		menudata2 = (uint8_t *)&ParaData.Advancd_data.logic;
+		menudata2[item] = (uint8_t)temp;
+		break;
+		case 2:
+		menudata1 = (uint16_t *)&ParaData.Factory_data.password;
+		menudata1[item] = temp;
+		default:
+		break;
+	}	
 }
 void Default_Fun (void)
 {

@@ -12,6 +12,7 @@
  */
 /*************************************************************************/
 #include <stdlib.h>
+#include "menu.h"
 #include "flash.h"
 #include "key.h"
 
@@ -37,6 +38,10 @@ void Param_Init(void)
 	uint16_t crc = 0;
 	ParamStr paratmp;	
 
+#ifdef CLEAN_EEPROM
+	WriteString(DEFAULTBLOCK, 1, "0");
+	WriteString(PARAMBLOCK, 1, "0");
+#endif
 	//设置存储器编程时间是不固定模式,块擦除时为固定时间的一半,未擦除时为固定时间
 	FLASH_SetProgrammingTime(FLASH_PROGRAMTIME_STANDARD);
 	//读取默认数据存储状态标志

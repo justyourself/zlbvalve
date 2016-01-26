@@ -83,6 +83,7 @@ void LCD_Display_Chinese(uint8_t *string, uint8_t type, uint8_t Line, uint8_t Co
 void LCD_Display_Mixure(uint8_t *string, uint8_t type, uint8_t Line, uint8_t Column, uint8_t colour);
 void LCD_Display_Line(uint8_t Line, uint8_t Column);
 void LCD_CleanL2L(uint8_t begin, uint8_t end);
+void LCD_Display_15x32(uint8_t Line, uint8_t Column, uint8_t *text);
 // ±äÁ¿ÉùÃ÷
 extern uint8_t Display_Buff[8][128];
 

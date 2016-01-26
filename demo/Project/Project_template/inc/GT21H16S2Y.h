@@ -28,6 +28,7 @@
 #define TYPE_8 				0 				//8 点字符
 #define TYPE_12 			1 				//12 点汉字字符
 #define TYPE_16 			2 				//16 点汉字字符
+#define TYPE_1532			3				//特殊字体
 // GPIO Set
 #define GT21_SPI_CLK         CLK_PERIPHERAL_SPI
 #define GT21_SPI_CS_PORT     GPIOG

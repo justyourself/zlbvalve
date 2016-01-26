@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "menu.h"
 #include "JLX12864G.h"
 #include "GT21H16S2Y.h"
 
@@ -381,6 +382,31 @@ void LCD_Display_16x16(uint8_t Line, uint8_t Column, uint8_t *text)
 	}	
 }
 /***************************************************************************/
+//函数:	void LCD_Display_15x32(uint8_t Line, uint8_t Column, uint8_t *text)
+//说明:	LCD显示16*16的汉字
+//输入: Line 设置行(页)定位,64行定义为8页,Line代表页码; Column 设置列定位,128列; text 待显示数据指针
+//输出: 无
+//编辑: zlb
+//时间: 2015.12.13
+/***************************************************************************/
+void LCD_Display_15x32(uint8_t Line, uint8_t Column, uint8_t *text)
+{
+	uint8_t i,j;
+	
+	for(j=0;j<4;j++)
+	{
+		LCD_SetCursorPos(Line+j,Column);
+		for (i=0;i<15;i++)
+		{
+			LCD_SendByte(DATA_TYPE,*text);
+			#ifdef DISPLAYBUFF
+			Display_Buff[Line+j-1][Column+i-1] = *text;
+			#endif
+			text++;
+		}
+	}	
+}
+/***************************************************************************/
 //函数:	void LCD_Display_128x64(uint8_t *text)
 //说明:	LCD显示128*64图片
 //输入: text 待显示数据指针
@@ -459,6 +485,25 @@ void LCD_Display_String(uint8_t *string, uint8_t type, uint8_t Line, uint8_t Col
 				Line += 2;
 			}
 		}
+		break;
+		case TYPE_1532:
+		for(i=0;i<len;i++)
+		{
+			for(addr = 0; addr<12;addr++)
+			{	
+				if(string[0] == specistring[addr].Index[0])
+					break;
+			}
+			pbff = (uint8_t *)specistring[addr].Matrix;
+			LCD_Display_15x32(Line, Column, pbff);
+			string++;
+			Column +=15;
+			if(Column >= 128)
+			{
+				Column = 1;
+//				Line += 4;
+			}
+		}	
 		break;
 		default:
 		for(i=0;i<len;i++)

@@ -176,8 +176,14 @@ INTERRUPT_HANDLER(EXTI_PORTE_IRQHandler, 7)
 		{
 			//强制停止电机输出
 			//点亮故障灯
+			flag.heat = 1;					//电机过热标志
 			LED_LightON(ERRLED);
 		}
+        else
+        {
+			flag.heat = 0;					//电机过热标志
+			LED_LightOFF(ERRLED);        	
+        }
 		//远方就地中断
 		if(!GPIO_ReadInputPin(HEAT_PORT, REMOTE))
 		{
