@@ -38,7 +38,7 @@ Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\src\flash_eeprom.c}.91.2" 0 0 0 0 "" 0 ""
 Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\src\JLX12864G.c}.503.5" 1 0 0 0 "" 0 ""
 Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\src\key.c}.194.2" 1 0 0 0 "" 0 ""
 Bp5=_ "STD_CODE" "{$PROJ_DIR$\..\src\stm8s_it.c}.180.4" 1 0 0 0 "" 0 ""
-Bp6=_ "STD_CODE" "{$PROJ_DIR$\..\src\menu.c}.904.3" 1 0 0 0 "" 0 ""
+Bp6=_ "STD_CODE" "{$PROJ_DIR$\..\src\menu.c}.904.2" 1 0 0 0 "" 0 ""
 Bp7=_ "STD_CODE" "{$PROJ_DIR$\..\src\flash.c}.46.2" 1 0 0 0 "" 0 ""
 Count=8
 [Aliases]
