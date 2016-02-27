@@ -53,6 +53,8 @@ void main(void)
 	uint8_t key;
 	// 初始化时钟
 	Init_Clock();
+	// 初始化输入输出
+	InOut_Init();
 	// 初始化LCD
 	JLX_LCD_Init();
 	// 初始化字库芯片
@@ -62,12 +64,10 @@ void main(void)
     Param_Init();
 	// 初始化GPIO
 	Key_Init();
-    // 初始化输入输出
-	InOut_Init();
 	// 初始化LED
 	LED_Init();
 	// 初始化ADC
-	ADC2_Shift_Init(ADC2_CHANNEL_7, ADC2_SCHMITTTRIG_CHANNEL7);
+	ADC2_Shift_Init(ADC2_CHANNEL_4, ADC2_SCHMITTTRIG_CHANNEL7);
 	// 初始化定时器4 1ms定时器 ADC采集专用
 	TIM4_Init();
 	//使能中断
@@ -86,6 +86,8 @@ void main(void)
 	Display(manyou);
 	while (1)
 	{
+		//判断是否存在故障与故障提示
+		
 		key = Key_Read();
 		// 页面是否需要按键值
 		if(dofunflag == ENABLE)
@@ -136,6 +138,7 @@ void main(void)
 				{
 					dofunflag	= DISABLE;
 					flag.fresh = DISABLE;
+					LCD_Clear();
 					Display(manyou + FatherIndex[layer]);
 				}
 				else
@@ -158,7 +161,7 @@ void main(void)
 						Display(manyou);
 				}
 				break;
-		}
+		}	
 	}
 }
 #ifdef USE_FULL_ASSERT

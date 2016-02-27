@@ -74,8 +74,8 @@ typedef struct _ADC_VALUE_
 #define R_RE		GPIO_PIN_4		//B4口 行程输入
 
 //LED 控制
-#define LED_LightON( LED )  GPIO_WriteLow(LED_PORT, LED)
-#define LED_LightOFF( LED)	GPIO_WriteHigh(LED_PORT, LED)
+#define LED_LightON( LED )  	GPIO_WriteLow(LED_PORT, LED)
+#define LED_LightOFF( LED)		GPIO_WriteHigh(LED_PORT, LED)
 
 //变量声明
 extern uint8_t ADC_Counter ;		//ADC通道采集计数器

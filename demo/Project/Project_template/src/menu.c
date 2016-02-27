@@ -639,7 +639,7 @@ void Init_Menu(void)
 void Display_TopMenu(void)
 {
 	float rate;
-	uint8_t datastr[6] = {"45.1%"};
+	uint8_t datastr[7] = {"45.1%"};
 
 	refresh = ENABLE;
 	//显示状态栏
@@ -652,7 +652,10 @@ void Display_TopMenu(void)
 	{
 		case 0:				//计算开度值
 			rate = ParaData.Basic_data.allopen - ParaData.Basic_data.allclose;
-			rate =(float) (ValidADC.shift - ParaData.Basic_data.allclose )*100 / rate;
+			if(ValidADC.shift > ParaData.Basic_data.allclose)
+				rate =(float) (ValidADC.shift - ParaData.Basic_data.allclose )*100 / rate;
+			else
+				rate = 0;
 //			rate = 45.1;
 			break;
 		case 1:				//计算温度值
@@ -662,7 +665,7 @@ void Display_TopMenu(void)
 			// rate = ;
 			break;
 	}
-	sprintf((char *)datastr, "%.1f%%", rate);
+	sprintf((char *)datastr, "%.1f%% ", rate);
 	//主显示区
 	LCD_Display_String(datastr,TYPE_16,4,50,NORMAL);
 //	LCD_Display_String(datastr,TYPE_1532,4,35,NORMAL);
@@ -732,8 +735,13 @@ void Display_Statusbar(uint8_t *number, uint8_t colour)
 void Display_Progressbar(uint8_t rate)
 {
 	uint8_t i;
-	uint8_t len = 128*rate/100;
+	uint8_t len;
 	
+	if(rate >= 100)
+	{
+		rate = 100;
+	}
+	len = 127*rate/100;
 	memset(Display_Buff[7],0xff,len);
 	memset(&Display_Buff[7][len],0x81,127-len);
 	//进度条结束位置
@@ -912,11 +920,10 @@ float GetMenu_Data(uint8_t father, uint8_t item)
 		case 0:			//基本菜单
 			//获取菜单数据地址
 			menudata1 = (uint16_t *)&ParaData.Basic_data.language;
-			//需要获取ADC值,根据默认全关与全开的比例计算百分比(全开90%,全关10%)
+			//需要获取ADC值 显示当前位置采集值 除10是为了看起来更加直观
 			if(item == 1|| item == 2)
 			{
-				outdata = ParaData.Basic_data.allopen - ParaData.Basic_data.allclose;
-				outdata =(float) (ValidADC.shift - ParaData.Basic_data.allclose )*100 / outdata;
+				outdata = ValidADC.shift / 10.0;
 			}
 			else
 			{
@@ -1052,9 +1059,9 @@ void Display_Warn(void)
 		ReadString(DEFAULTBLOCK, sizeof(ParamStr), (uint8_t *)&ParaData);
 		//保存到菜单数据块中
 		WriteString(PARAMBLOCK, sizeof(ParamStr), (uint8_t *)&ParaData);
-		dofunflag	= DISABLE;
-		flag.fresh = DISABLE;
-		Display(manyou + FatherIndex[layer]);
+		//保存成功
+		Display_Save(VALUEL,VALUEC-16);
+//		Display(manyou + FatherIndex[layer]);
 	}
 	
 }

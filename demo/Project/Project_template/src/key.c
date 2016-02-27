@@ -23,7 +23,7 @@ ADCValueStr RealADC;						//实时ADC值
 ADCValueStr UnitADC;						//死区ADC值
 ADCValueStr ValidADC;						//有效ADC值
 FlagTypeStr flag = 0;					    //状态标志
-uint16_t Shift_Step = 20;					//位移ADC偏移多少开始停止电机转动
+uint16_t Shift_Step = 5;					//位移ADC偏移多少开始停止电机转动
 uint8_t status;								//当前状态(远方或就地)
 uint32_t light_flag = 1;					//背光灯标志,为0时不进行计数
 
@@ -114,8 +114,10 @@ void InOut_Init(void)
 	//初始化输出为高电平
 	GPIO_WriteHigh(OUT_PORT,(GPIO_Pin_TypeDef)(ERR1|ERR2|OPEN|CLOSE));
 	//分合控制输出状态,0分合输出使能,1分合输出失能
-	flag.overclose = 0;
-	flag.overopen = 0;
+	flag.overclose = 1;
+	flag.overopen = 1;
+	Motor_Out(CLOSE, DISABLE);
+	Motor_Out(OPEN, DISABLE);
 	
 	//使能上升沿下降沿触发中断(远方就地为上升沿下降沿触发中断,电机过热中断为下降沿中断 )
 	EXTI_SetExtIntSensitivity(EXTI_PORT_GPIOE, EXTI_SENSITIVITY_RISE_FALL);
@@ -182,7 +184,7 @@ void ADC2_Shift_Init(ADC2_Channel_TypeDef ADC2_Channel, ADC2_SchmittTrigg_TypeDe
 		ADC2_EXTTRIG_TIM, DISABLE, ADC2_ALIGN_RIGHT, ADC2_SchmittTrigg_Channel, DISABLE);
 	
 	//使能ADC
-	ADC2_Cmd(ENABLE);
+//	ADC2_Cmd(ENABLE);
 	//使能中断
 	ADC2_ITConfig(ENABLE);
 	//初始化ADC参数
@@ -294,20 +296,36 @@ void Shift_Protect(void)
 	//计算是否超过开度值(不确定开关AD值的大小关系,需要添加比较程序)
 	if(ValidADC.shift < (ParaData.Basic_data.allclose + Shift_Step))
 	{
-		Motor_Out(CLOSE, DISABLE);
 		flag.overclose = 1;
+		flag.overopen = 0;
 	}
 	else if(ValidADC.shift > (ParaData.Basic_data.allopen - Shift_Step))
 	{
-		Motor_Out(OPEN, DISABLE);
 		flag.overopen = 1;
+		flag.overclose = 0;
+	}
+	else
+	{
+		flag.overopen = 0;
+		flag.overclose = 0;
+	}
+
+	if(flag.overclose)
+	{
+		Motor_Out(CLOSE, DISABLE);
 	}
 	else
 	{
 		Motor_Out(CLOSE, ENABLE);
+	}
+
+	if(flag.overopen)
+	{
+		Motor_Out(OPEN, DISABLE);
+	}
+	else
+	{
 		Motor_Out(OPEN, ENABLE);
-		flag.overopen = 0;
-		flag.overclose = 0;
 	}
 }
 /***************************************************************************/
